@@ -1,0 +1,36 @@
+{
+  "name": "APIHealthCheck",
+  "version": "0.0.1",
+  "description": "Monitor and log the status of APIs.",
+  "keywords": [
+    "API",
+    "Health Check",
+    "APIs",
+    "Monitoring"
+  ],
+  "author": "RedBrickSoftware",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redbricksoftware/APIHealthCheck.git"
+  },
+  "bugs": {
+    "url": "https://github.com/redbricksoftware/APIHealthCheck/issues"
+  },
+  "homepage": "http://redbricksoftware.com",
+  "main": "index.js",
+  "engines": {
+    "node": ">=4.2.4"
+  },
+  "dependencies": {
+    "express": "*",
+    "async": "*"
+  },
+  "devDependencies": {
+    "mocha": "~3.2.0",
+    "chai": "~3.5.0"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec"
+  }
+}

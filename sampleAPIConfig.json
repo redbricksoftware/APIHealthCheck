@@ -1,0 +1,37 @@
+{
+  "5df19fac-6407-4add-b91d-d89155316ca9": {
+    "name": "sample api 1",
+    "uri": "https://jsonplaceholder.typicode.com/posts",
+    "enabled": true,
+    "pollFrequencyInSeconds": 60,
+    "maxResponseTimeMS": 500
+  },
+  "f4834d1f-818e-412d-9ce4-c9927a5bf2d4": {
+    "name": "sample api USERS",
+    "uri": "https://jsonplaceholder.typicode.com/users",
+    "enabled": true,
+    "pollFrequencyInSeconds": 20,
+    "maxResponseTimeMS": 750
+  },
+  "641598c1-cdc8-4432-b9bf-8d68b9bad990": {
+    "name": "sample api USERS",
+    "uri": "https://jsonplaceholder.typicode.com/users",
+    "enabled": true,
+    "pollFrequencyInSeconds": 15,
+    "maxResponseTimeMS": 750
+  },
+  "bce847ca-b1f2-4ff0-81c2-2a523b9a86c9": {
+    "name": "sample api USERS",
+    "uri": "https://jsonplaceholder.typicode.com/users",
+    "enabled": true,
+    "pollFrequencyInSeconds": 120,
+    "maxResponseTimeMS": 750
+  },
+  "7451ccd4-2e4f-4aac-b29a-81d46c23239a": {
+    "name": "sample api USERS",
+    "uri": "https://jsonplaceholder.typicode.com/users",
+    "enabled": true,
+    "pollFrequencyInSeconds": 1400,
+    "maxResponseTimeMS": 2000
+  }
+}

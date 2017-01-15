@@ -1,6 +1,6 @@
 {
   "name": "APIHealthCheck",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Monitor and log the status of APIs.",
   "keywords": [
     "API",
@@ -36,10 +36,8 @@
     "core-js": "^2.4.1",
     "rxjs": "5.0.1",
     "zone.js": "^0.7.4",
-
     "bootstrap": "~3.3.7",
     "jquery": "~3.1.1",
-
     "express": "~4.14.0",
     "morgan": "~1.7.0",
     "body-parser": "~1.15.2",
@@ -49,7 +47,6 @@
     "mocha": "~3.2.0",
     "chai": "~3.5.0",
     "chai-http": "~3.0.0",
-
     "concurrently": "^3.1.0",
     "lite-server": "^2.2.2",
     "typescript": "~2.0.10",

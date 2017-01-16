@@ -1,15 +1,18 @@
 'use strict';
+//Config Setup
+const port = process.env.PORT || 3000;
+const deploymentType = process.env.NODE_ENV || 'development';
 
 const express = require('express');
 const timer = require('timers');
 const bodyParser = require('body-parser');
+const https = require('https');
+const moment = require('moment');
 
 //Express server
 const app = express();
 //API Router
 const router = express.Router();
-
-
 
 
 app.use(function (req, res, next) {
@@ -32,10 +35,6 @@ app.use(function (req, res, next) {
 });
 
 
-
-//Config Setup
-const port = process.env.PORT || 3000;
-const deploymentType = process.env.NODE_ENV || 'development';
 
 
 let apiMonitoringList = {};
@@ -67,8 +66,8 @@ router.get('/v1/HealthCheckDetail/:id', function (req, res) {
 
     let returnDetail;
 
-    for(let i = 0; i < apiDetailList.data.length; i++){
-        if(apiDetailList.data[i].id == id){
+    for (let i = 0; i < apiDetailList.data.length; i++) {
+        if (apiDetailList.data[i].id == id) {
             returnDetail = apiDetailList.data[i];
         }
     }
@@ -162,14 +161,26 @@ function writeConsole(val) {
 }
 
 
+performHealthCheck('https://www.google.com', 'abc');
+
 function performHealthCheck(url, normalizeFunction) {
+    var now = moment();
+
     https.get(url, function (res) {
-        httpsCallback(res, normalizeFunction);
+        httpsCallback(res, normalizeFunction, now, moment());
     });
 }
 
-function httpsCallback(res, normalizeFunction) {
-    var dataResult = '';
+function httpsCallback(res, normalizeFunction, start, end) {
+
+    var dataResult;
+
+    console.log(res.statusCode);
+    console.log(normalizeFunction);
+    console.log(start);
+    console.log(end);
+
+    console.log('differnece: ' + end.diff(start) + 'ms');
 
     res.on('data', (data) => {
         //process.stdout.write(data);
@@ -177,6 +188,60 @@ function httpsCallback(res, normalizeFunction) {
     });
 
     res.on('end', () => {
-        dyn_functions[normalizeFunction](dataResult);
+        //dyn_functions[normalizeFunction](dataResult);
+        //console.log(dataResult);
     });
+}
+
+
+const mongoose = require('mongoose');
+
+function saveRecord(record) {
+    console.log(record);
+}
+
+
+saveRecord('abcdef');
+
+function saveRecord2() {
+    mongoose.connect('mongodb://localhost/test');
+
+    var healthCheckSummarySchema = mongoose.Schema({
+        name: String,
+        uri: String,
+        currentStatus: String,
+        responseTimeMS: Number,
+        uptime24h: Number,
+        icon: String,
+        rowStatus: String,
+    });
+
+    var healthCheckData = mongoose.model('HealthCheck', healthCheckSummarySchema);
+
+    var newHealthCheckTest = new healthCheckData({name: 'abc', uri: 'def', currentStatus: 'Up'});
+    console.log(newHealthCheckTest.name); // 'Silence'
+
+    /*
+    newHealthCheckTest.save(function (err, newHealthCheckTest) {
+        if (err) return console.error(err);
+        //fluffy.speak();
+    });
+
+    var query = healthCheckData.find({ 'name': 'abc' });
+
+    query.exec(function (err, person) {
+        if (err) {
+            return handleError(err);
+        } else {
+            console.log(person);
+        }
+    })
+    */
+}
+
+function printDef(a,b,c) {
+    console.log('printDef')
+    console.log(a);
+    console.log(b);
+    console.log(c);
 }

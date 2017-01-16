@@ -41,8 +41,6 @@ var AppComponent = (function () {
         var _this = this;
         this.healthCheckService.getHealthCheckSummary()
             .then(function (data) {
-            console.log('summary data: ');
-            console.log(data);
             _this.healthCheckSummarys = data;
             _this.setHealthCheckClass();
         })
@@ -53,7 +51,6 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.setHealthCheckClass = function () {
         for (var i = 0; i < this.healthCheckSummarys.length; i++) {
-            console.log(this.healthCheckSummarys[i].currentStatus);
             switch (this.healthCheckSummarys[i].currentStatus) {
                 case 'operational':
                     this.healthCheckSummarys[i].icon = 'images/success.png';
@@ -96,13 +93,13 @@ var AppComponent = (function () {
         var _this = this;
         this.healthCheckService.getHealthCheckDetail()
             .then(function (data) {
-            console.log('detail data: ');
-            console.log(data);
+            //console.log('detail data: ');
+            //console.log(data);
             _this.healthCheckDetails = data;
         })
             .catch(function (ex) {
             //Example console.log
-            //console.log('Error fetching CDN data:', ex);
+            console.log('Error fetching Health Check Detail data:', ex);
         });
     };
     AppComponent.prototype.getHeroes = function () {

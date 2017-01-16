@@ -32,8 +32,9 @@ export class AppComponent implements OnInit {
     selectHealthSummary(summary: HealthCheckSummary): void {
         this.healthCheckService.getHealthCheckDetailByID(summary.id)
             .then(data => {
+
                 this.selectedHealthCheckDetail = data;
-                if(this.selectedHealthCheckDetail.statusHistory) {
+                if (this.selectedHealthCheckDetail.statusHistory) {
                     this.setHealthCheckDetailStatus();
                 }
             })
@@ -47,8 +48,6 @@ export class AppComponent implements OnInit {
     getHealthCheckSummary(): void {
         this.healthCheckService.getHealthCheckSummary()
             .then(data => {
-                console.log('summary data: ');
-                console.log(data);
                 this.healthCheckSummarys = data;
                 this.setHealthCheckClass();
             })
@@ -59,8 +58,9 @@ export class AppComponent implements OnInit {
     }
 
     setHealthCheckClass(): void {
+
+
         for (let i = 0; i < this.healthCheckSummarys.length; i++) {
-            console.log(this.healthCheckSummarys[i].currentStatus);
 
             switch (this.healthCheckSummarys[i].currentStatus) {
                 case 'operational':
@@ -106,13 +106,13 @@ export class AppComponent implements OnInit {
     getHealthCheckDetail(): void {
         this.healthCheckService.getHealthCheckDetail()
             .then(data => {
-                console.log('detail data: ');
-                console.log(data);
+                //console.log('detail data: ');
+                //console.log(data);
                 this.healthCheckDetails = data
             })
             .catch((ex) => {
                 //Example console.log
-                //console.log('Error fetching CDN data:', ex);
+                console.log('Error fetching Health Check Detail data:', ex);
             });
     }
 
@@ -151,4 +151,5 @@ export class AppComponent implements OnInit {
     onSelect(hero: Hero): void {
         this.selectedHero = hero;
     }
+
 }

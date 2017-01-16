@@ -1,4 +1,7 @@
-export class HealthCheckSummary {
+import {IHealthCheckSummary} from "../../models/IHealthCheck";
+
+export class HealthCheckSummary implements IHealthCheckSummary {
+
     id: string;
     name: string;
     uri: string;
@@ -7,4 +10,8 @@ export class HealthCheckSummary {
     uptime24h: number;
     icon: string;
     rowStatus: string;
+
+    public greet() {
+        return "Hello, " + this.id;
+    }
 }

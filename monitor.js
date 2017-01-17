@@ -4,17 +4,26 @@
 const deploymentType = process.env.NODE_ENV || 'development';
 
 const timer = require('timers');
+const moment = require('moment');
+
 const https = require('https');
 const http = require('http');
-const moment = require('moment');
 
 
 let apiMonitoringList = {};
 let apiSummaryList = {};
 let apiDetailList = {};
 
+
+const mongoAccess = require('./mongoAccess');
+let abc = mongoAccess.getAPIConfig();
+
 if (deploymentType == 'production') {
-    //TODO: get apis from stash
+    //TODO: get apis from mongo
+
+
+
+
 } else {
     apiMonitoringList = require('./sampleAPIConfig.json');
     apiSummaryList = require('./sampleAPISummary.json');
@@ -28,7 +37,7 @@ if (deploymentType == 'production') {
 }
 
 //Array of dynamic functions
-var dyn_functions = {};
+let dyn_functions = {};
 initTimers(apiMonitoringList);
 
 

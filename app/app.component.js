@@ -10,6 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var hero_service_1 = require('./heroes/hero.service');
+//CDN Service
+var health_check_summary_1 = require('./healthCheck/health-check-summary');
 var health_check_service_1 = require('./healthCheck/health-check.service');
 var AppComponent = (function () {
     function AppComponent(heroService, healthCheckService) {
@@ -50,7 +52,9 @@ var AppComponent = (function () {
         });
     };
     AppComponent.prototype.setHealthCheckClass = function () {
+        var listHCS = [];
         for (var i = 0; i < this.healthCheckSummarys.length; i++) {
+            listHCS[i] = new health_check_summary_1.HealthCheckSummary(this.healthCheckSummarys[i]);
             switch (this.healthCheckSummarys[i].currentStatus) {
                 case 'operational':
                     this.healthCheckSummarys[i].icon = 'images/success.png';
@@ -70,6 +74,7 @@ var AppComponent = (function () {
                     break;
             }
         }
+        console.log(listHCS[1].greet());
     };
     AppComponent.prototype.setHealthCheckDetailStatus = function () {
         for (var i = 0; i < this.selectedHealthCheckDetail.statusHistory.length; i++) {

@@ -3,14 +3,24 @@
 const port = process.env.PORT || 3000;
 const deploymentType = process.env.NODE_ENV || 'development';
 
+const auth0Secret = process.env.auth0Secret || 'divFe_KYHqJ9DH0fd3jxPkECnpTYPVHtRLJoRi2YIGQenkoVPjDM05-OQYS3BOyL';
+const auth0ClientId = process.env.auth0Secret || 'ENjNl28vprnZws3EAlNRKD7APNsJTD2J';
+
+//Express server
 const express = require('express');
+const app = express();
+const jwt = require('express-jwt');
+
+const jwtCheck = jwt({
+    secret: auth0Secret,
+    audience: auth0ClientId
+});
+
 const timer = require('timers');
 const bodyParser = require('body-parser');
 const https = require('https');
 const moment = require('moment');
 
-//Express server
-const app = express();
 //API Router
 const router = express.Router();
 
@@ -35,8 +45,6 @@ app.use(function (req, res, next) {
 });
 
 
-
-
 let apiMonitoringList = {};
 let apiSummaryList = {};
 let apiDetailList = {};
@@ -54,6 +62,15 @@ if (deploymentType == 'production') {
         apiDetailList = JSON.parse(apiDetailList);
     }
 }
+
+
+app.use('/api/v1/authTest', jwtCheck);
+
+router.get('/v1/authTest', function (req, res) {
+    console.log(req);
+    console.log(res);
+    res.json({'sec': true});
+});
 
 router.get('/v1/HealthCheckSummary', function (req, res) {
     res.json(apiSummaryList);
@@ -160,8 +177,7 @@ function writeConsole(val) {
     //timer.clearInterval(dyn_functions['timer1']);
 }
 
-
-performHealthCheck('https://www.google.com', 'abc');
+//performHealthCheck('https://www.google.com', 'abc');
 
 function performHealthCheck(url, normalizeFunction) {
     var now = moment();
@@ -222,24 +238,24 @@ function saveRecord2() {
     console.log(newHealthCheckTest.name); // 'Silence'
 
     /*
-    newHealthCheckTest.save(function (err, newHealthCheckTest) {
-        if (err) return console.error(err);
-        //fluffy.speak();
-    });
+     newHealthCheckTest.save(function (err, newHealthCheckTest) {
+     if (err) return console.error(err);
+     //fluffy.speak();
+     });
 
-    var query = healthCheckData.find({ 'name': 'abc' });
+     var query = healthCheckData.find({ 'name': 'abc' });
 
-    query.exec(function (err, person) {
-        if (err) {
-            return handleError(err);
-        } else {
-            console.log(person);
-        }
-    })
-    */
+     query.exec(function (err, person) {
+     if (err) {
+     return handleError(err);
+     } else {
+     console.log(person);
+     }
+     })
+     */
 }
 
-function printDef(a,b,c) {
+function printDef(a, b, c) {
     console.log('printDef')
     console.log(a);
     console.log(b);

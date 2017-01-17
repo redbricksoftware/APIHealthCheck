@@ -59,8 +59,11 @@ export class AppComponent implements OnInit {
 
     setHealthCheckClass(): void {
 
+        let listHCS: HealthCheckSummary[] = [];
 
         for (let i = 0; i < this.healthCheckSummarys.length; i++) {
+
+            listHCS[i] = new HealthCheckSummary(this.healthCheckSummarys[i]);
 
             switch (this.healthCheckSummarys[i].currentStatus) {
                 case 'operational':
@@ -82,6 +85,8 @@ export class AppComponent implements OnInit {
             }
 
         }
+
+        console.log(listHCS[1].greet());
     }
 
     setHealthCheckDetailStatus(): void {

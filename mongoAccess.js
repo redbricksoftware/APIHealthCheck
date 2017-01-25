@@ -1,7 +1,17 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const mongoDBUri = 'mongodb://localhost:27017/test';
+
+
+const mongoUser = process.env.NODE_ENV || '';
+const mongoPass = process.env.NODE_ENV || '';
+const mongoUrl = process.env.NODE_ENV || 'localhost';
+const mongoPort = process.env.NODE_ENV || '27017';
+const mongoDB = process.env.NODE_ENV || 'test';
+
+
+const mongoDBUri = 'mongodb://' + mongoUser + (mongoUser != '' ? ':' : '') + mongoPass + (mongoUser != '' ? '@' : '') + mongoUrl + ':' + mongoPort + '/' + mongoDB;
+console.log(mongoDBUri);
 //mongoose.connect('mongodb://localhost/test');
 mongoose.connect(mongoDBUri, {config: {autoIndex: false}});
 
@@ -65,43 +75,86 @@ function findCallbackResults(err, res) {
         console.log('error getting results: ');
         console.log(err);
     } else {
-        console.log(res);
+        console.log('abc');
         return res;
     }
 }
 
+module.exports.getAPIConfig = function (callback) {
+    apiConfig.find({}).exec(function (err, res) {
+        callback(err, res);
+    });
+};
 
-module.exports = {
-    getAPIConfig: function () {
-        console.log('get api config');
-        apiConfig.find({}, findCallbackResults);
-    },
+module.exports.getAPIConfigByID = function (id, callback) {
+    console.log(id);
+    apiConfig.find({'_id': id}).exec(function (err, res) {
+        callback(err, res);
+    });
+};
 
-    removeAPIConfigById: function (id) {
-        apiConfig.remove({_id: id});
-    },
 
-    getAllAPIConfig: function () {
+module.exports.addAPIConfig = function (name, uri, enabled, pollFrequencyInSeconds, maxResponseTimeMS, emergencyContactGroup, callback) {
+    console.log(name + ' - ' + uri + ' - ' + enabled);
+    if (name != null && name != undefined) {
 
-    },
+        let newApiConfig = new apiConfig({
+            name: name == undefined || null ? uri : name,
+            uri: uri,
+            enabled: enabled == undefined || null ? true : enabled,
+            pollFrequencyInSeconds: pollFrequencyInSeconds == undefined || null ? 600 : pollFrequencyInSeconds,
+            maxResponseTimeMS: maxResponseTimeMS == undefined || null ? 2500 : maxResponseTimeMS,
+            emergencyContactGroup: emergencyContactGroup == undefined || null ? '' : emergencyContactGroup
+        });
 
-    getAllActiveAPIConfig: function () {
-
+        newApiConfig.save(function (err) {
+            if (err) {
+                callback(err, '');
+            } else {
+                callback(null, true);
+            }
+        });
+    } else {
+        callback('name cannot be null', '');
     }
 };
 
+
+//module.exports = apiConfig;
+
 /*
- Example use:
+ module.exports = new Promise((res, err) => {
+ apiConfig.find({}, findCallbackResults);
+ //setTimeout(resolve.bind(null, 'someValueToBeReturned'), 2000);
+ });
+ */
 
+/*
+ exports.auth = function(user, pass, callback){
+ User.findOne(...., function(err, user){
+ var result = !!user;
+ callback(err, result);
+ });
+ }
+ */
 
- console.log(mongoose.connection.readyState);
- console.log('0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting');
- //addAPIConfig('abc', 'http://google.com', true, 20, 500, '');
- //addAPIConfig('abc2', 'http://google2.com', false);
- //addAPIConfig('abc3', 'http://google3.com', true, 50);
- //addAPIConfig('abc4', 'http://google4.com', true);
+/*
+ module.exports = {
+ getAPIConfig: function () {
+ console.log('get api config');
+ return apiConfig.find({}, findCallbackResults);
+ },
 
- //removeAPIConfigById('587d91b44ceef33234eafa33');
- getAPIConfig();
+ removeAPIConfigById: function (id) {
+ apiConfig.remove({_id: id});
+ },
 
+ getAllAPIConfig: function () {
+
+ },
+
+ getAllActiveAPIConfig: function () {
+
+ }
+ };
  */

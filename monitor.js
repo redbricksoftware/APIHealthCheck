@@ -16,12 +16,48 @@ let apiDetailList = {};
 
 
 const mongoAccess = require('./mongoAccess');
-let abc = mongoAccess.getAPIConfig();
+
+
+mongoAccess.addAPIConfig('some new API','https://someAPI',true,200,500,'',function(err,res){
+    if (err) {
+        console.log('error: ' + err);
+    } else {
+        console.log(res);
+    }
+});
+
+mongoAccess.getAPIConfig(function (err, res) {
+    if (err) {
+        console.log('error: ' + err);
+    } else {
+        /*
+        console.log(res.forEach(function (abc) {
+            console.log('abc' + abc)
+        }))
+        */
+    }
+});
+
+
+mongoAccess.getAPIConfigByID('587d91b44ceef33234eafa35', function(err,res){
+    if (err) {
+        console.log('error: ' + err);
+    } else {
+        console.log(res.forEach(function (abc) {
+            console.log('abc' + abc)
+        }))
+    }
+});
+
+
+
+/*
+ let abc = mongoAccess.getAPIConfig.then(res => {console.log(res)});
+ console.log('resp' + abc);
+ */
 
 if (deploymentType == 'production') {
     //TODO: get apis from mongo
-
-
 
 
 } else {
@@ -38,7 +74,7 @@ if (deploymentType == 'production') {
 
 //Array of dynamic functions
 let dyn_functions = {};
-initTimers(apiMonitoringList);
+//initTimers(apiMonitoringList);
 
 
 //Set initial timers

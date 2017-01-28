@@ -16,6 +16,7 @@ const pool = mysql.createPool({
 
 import {APIConfig} from './models/APIConfig';
 import {APIStatusDetail} from './models/APIStatusDetail';
+import {APIStatus} from './models/APIStatusEnum';
 import {User} from './models/User';
 
 class daHealthCheck {
@@ -147,7 +148,6 @@ class daHealthCheck {
         };
         //insertAPIStatus();
 
-
         let queryAll = function (table) {
             pool.query('SELECT * FROM ' + table, function (error, results, fields) {
                 console.log(results);
@@ -156,14 +156,38 @@ class daHealthCheck {
 
         };
 
-
         let closePool = function () {
             pool.end(function (err) {
                 // all connections in the pool have ended
             });
         };
 
+
+        this.getAPIStatusDetailsByAPIID(1)
+            .then(function (resp) {
+                console.log(resp);
+            })
+            .catch(function (err) {
+                console.error(err);
+            });
+
         /*
+         this.getAPIStatusDetailsByTenantID(1)
+         .then(function(resp){
+         console.log(resp);
+         })
+         .catch(function(err){
+         console.error(err);
+         });
+
+         this.getAPIConfigAll()
+         .then(function (resp) {
+         console.log(resp);
+         })
+         .catch(function (err) {
+         console.error(err);
+         });
+
          let configs = this.getAPIConfigByTenantID(1)
          .then(function (resp) {
          console.log('got resp:');
@@ -172,21 +196,16 @@ class daHealthCheck {
          .catch(function (err) {
          console.log(err);
          });
+
+         let configs2 = this.getAPIConfigByName(1, 'a')
+         .then(function (resp) {
+         console.log('got resp:');
+         console.log(resp);
+         })
+         .catch(function (err) {
+         console.log(err);
+         });
          */
-
-        let configs2 = this.getAPIConfigByName(1, 'a')
-            .then(function (resp) {
-                console.log('got resp:');
-                console.log(resp);
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
-    }
-
-    getHealthCheck() {
-
-
     }
 
     addAPIConfig(config: APIConfig) {
@@ -205,7 +224,7 @@ class daHealthCheck {
                 } else {
                     let returnAPIConfigs = [];
                     for (let i = 0; i < results.length; i++) {
-                        returnAPIConfigs.push(APIConfig.mapMySQLResultsToAPIConfig(results[0]));
+                        returnAPIConfigs.push(APIConfig.mapMySQLResultsToAPIConfig(results[i]));
                     }
                     resolve(returnAPIConfigs);
                 }
@@ -222,7 +241,7 @@ class daHealthCheck {
                 } else {
                     let returnAPIConfigs = [];
                     for (let i = 0; i < results.length; i++) {
-                        returnAPIConfigs.push(APIConfig.mapMySQLResultsToAPIConfig(results[0]));
+                        returnAPIConfigs.push(APIConfig.mapMySQLResultsToAPIConfig(results[i]));
                     }
                     resolve(returnAPIConfigs);
                 }
@@ -231,16 +250,16 @@ class daHealthCheck {
     }
 
 
-    getAPIConfigByName(tenantID, name) {
+    getAPIConfigByName(tenantID, name): Promise<APIConfig[]> {
 
         return new Promise(function (resolve, reject) {
-            pool.query('SELECT * FROM APIConfigs WHERE CFGTenantID = ? AND CFGName LIKE ?', [tenantID, 'API%' + name + '%'], function (error, results, fields) {
+            pool.query('SELECT * FROM APIConfigs WHERE CFGTenantID = ? AND CFGName LIKE ?', [tenantID, '%' + name + '%'], function (error, results, fields) {
                 if (error) {
                     reject(error);
                 } else {
                     let returnAPIConfigs = [];
                     for (let i = 0; i < results.length; i++) {
-                        returnAPIConfigs.push(APIConfig.mapMySQLResultsToAPIConfig(results[0]));
+                        returnAPIConfigs.push(APIConfig.mapMySQLResultsToAPIConfig(results[i]));
                     }
                     resolve(returnAPIConfigs);
                 }
@@ -249,21 +268,63 @@ class daHealthCheck {
     }
 
 
-    getAPIConfigByID(tenantID, apiConfigID) {
+    getAPIConfigByID(tenantID, apiConfigID): Promise<APIConfig> {
 
+        return new Promise(function (resolve, reject) {
+            pool.query('SELECT * FROM APIConfigs WHERE CFGTenantID = ? AND CFGConfigID LIKE ?', [tenantID, apiConfigID], function (error, results, fields) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(APIConfig.mapMySQLResultsToAPIConfig(results[0]));
+                }
+            });
+        });
     }
 
-    getAPIDataByTenantID(tenantID) {
+    addAPIData(apiStatusDetail: APIStatusDetail) {
+        if (apiStatusDetail.configID == null || apiStatusDetail.configID < 1) {
+            throw new Error('Invalid ConfigID');
+        }
 
+        pool.query('INSERT INTO APIStatusDetails set ?',
+            {
+                DTAConfigID: apiStatusDetail.configID,
+                DTADateTime: apiStatusDetail.dateTime == null ? moment.now() : apiStatusDetail.dateTime,
+                DTAPingResponseMS: apiStatusDetail.pingResponseMS == null ? 1000 : apiStatusDetail.pingResponseMS,
+                DTAStatus: apiStatusDetail.apiStatus == null ? APIStatus.Unknown : apiStatusDetail.apiStatus
+            },
+            function (error, results, fields) {
+                console.log(error);
+                console.log(results);
+            });
     }
 
-    getAPIDataByAPIID(tenantID, apiConfigID) {
+    getAPIStatusDetailsByTenantID(tenantID): Promise<APIStatusDetail> {
 
+        return new Promise(function (resolve, reject) {
+            pool.query('SELECT APIStatusDetails.* FROM APIStatusDetails JOIN APIConfigs ON APIStatusDetails.DTAConfigID = APIConfigs.CFGConfigID WHERE APIConfigs.CFGTenantID = ?', [tenantID], function (error, results, fields) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
     }
 
-    addAPIData(tenantID, apiConfigID, status, responseTimeMS) {
+    getAPIStatusDetailsByAPIID(apiConfigID) {
 
+        return new Promise(function (resolve, reject) {
+            pool.query('SELECT * FROM APIStatusDetails WHERE DTAConfigID = ?', [apiConfigID], function (error, results, fields) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
     }
+
 }
 
 let health = new daHealthCheck();

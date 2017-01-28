@@ -10,17 +10,20 @@ export class APIConfig {
     maxResponseTimeMS: number;
     emergencyContactGroup: number;
 
-    static mapMySQLResultsToAPIConfig(val){
+    static mapMySQLResultsToAPIConfig(val): APIConfig {
         let newAPIConfig = new APIConfig;
-        newAPIConfig.configID = val.CFGConfigID;
-        newAPIConfig.tenantID = val.CFGTenantID;
-        newAPIConfig.name = val.CFGName;
-        newAPIConfig.uri = val.CFGURI;
-        newAPIConfig.enabled = val.CFGEnabled;
-        newAPIConfig.pollFrequencyInSeconds = val.CFGPollFrequencyInSeconds;
-        newAPIConfig.maxResponseTimeMS = val.CFGMaxResponseTimeMS;
-        newAPIConfig.emergencyContactGroup = val.CFGEmergencyContactGroup;
-
+        if (val) {
+            newAPIConfig.configID = val.CFGConfigID;
+            newAPIConfig.tenantID = val.CFGTenantID;
+            newAPIConfig.name = val.CFGName;
+            newAPIConfig.uri = val.CFGURI;
+            newAPIConfig.enabled = val.CFGEnabled;
+            newAPIConfig.pollFrequencyInSeconds = val.CFGPollFrequencyInSeconds;
+            newAPIConfig.maxResponseTimeMS = val.CFGMaxResponseTimeMS;
+            newAPIConfig.emergencyContactGroup = val.CFGEmergencyContactGroup;
+        } else {
+            return null;
+        }
         return newAPIConfig;
     }
 

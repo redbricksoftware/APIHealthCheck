@@ -12,6 +12,7 @@ var pool = mysql.createPool({
     database: acctDetails.database
 });
 var APIConfig_1 = require('./models/APIConfig');
+var APIStatusEnum_1 = require('./models/APIStatusEnum');
 var daHealthCheck = (function () {
     function daHealthCheck() {
         this.init();
@@ -123,7 +124,30 @@ var daHealthCheck = (function () {
                 // all connections in the pool have ended
             });
         };
+        this.getAPIStatusDetailsByAPIID(1)
+            .then(function (resp) {
+            console.log(resp);
+        })
+            .catch(function (err) {
+            console.error(err);
+        });
         /*
+         this.getAPIStatusDetailsByTenantID(1)
+         .then(function(resp){
+         console.log(resp);
+         })
+         .catch(function(err){
+         console.error(err);
+         });
+
+         this.getAPIConfigAll()
+         .then(function (resp) {
+         console.log(resp);
+         })
+         .catch(function (err) {
+         console.error(err);
+         });
+
          let configs = this.getAPIConfigByTenantID(1)
          .then(function (resp) {
          console.log('got resp:');
@@ -132,17 +156,16 @@ var daHealthCheck = (function () {
          .catch(function (err) {
          console.log(err);
          });
+
+         let configs2 = this.getAPIConfigByName(1, 'a')
+         .then(function (resp) {
+         console.log('got resp:');
+         console.log(resp);
+         })
+         .catch(function (err) {
+         console.log(err);
+         });
          */
-        var configs2 = this.getAPIConfigByName(1, 'a')
-            .then(function (resp) {
-            console.log('got resp:');
-            console.log(resp);
-        })
-            .catch(function (err) {
-            console.log(err);
-        });
-    };
-    daHealthCheck.prototype.getHealthCheck = function () {
     };
     daHealthCheck.prototype.addAPIConfig = function (config) {
     };
@@ -157,7 +180,7 @@ var daHealthCheck = (function () {
                 else {
                     var returnAPIConfigs = [];
                     for (var i = 0; i < results.length; i++) {
-                        returnAPIConfigs.push(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[0]));
+                        returnAPIConfigs.push(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[i]));
                     }
                     resolve(returnAPIConfigs);
                 }
@@ -173,7 +196,7 @@ var daHealthCheck = (function () {
                 else {
                     var returnAPIConfigs = [];
                     for (var i = 0; i < results.length; i++) {
-                        returnAPIConfigs.push(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[0]));
+                        returnAPIConfigs.push(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[i]));
                     }
                     resolve(returnAPIConfigs);
                 }
@@ -182,14 +205,14 @@ var daHealthCheck = (function () {
     };
     daHealthCheck.prototype.getAPIConfigByName = function (tenantID, name) {
         return new es6_promise_1.Promise(function (resolve, reject) {
-            pool.query('SELECT * FROM APIConfigs WHERE CFGTenantID = ? AND CFGName LIKE ?', [tenantID, 'API%' + name + '%'], function (error, results, fields) {
+            pool.query('SELECT * FROM APIConfigs WHERE CFGTenantID = ? AND CFGName LIKE ?', [tenantID, '%' + name + '%'], function (error, results, fields) {
                 if (error) {
                     reject(error);
                 }
                 else {
                     var returnAPIConfigs = [];
                     for (var i = 0; i < results.length; i++) {
-                        returnAPIConfigs.push(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[0]));
+                        returnAPIConfigs.push(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[i]));
                     }
                     resolve(returnAPIConfigs);
                 }
@@ -197,12 +220,54 @@ var daHealthCheck = (function () {
         });
     };
     daHealthCheck.prototype.getAPIConfigByID = function (tenantID, apiConfigID) {
+        return new es6_promise_1.Promise(function (resolve, reject) {
+            pool.query('SELECT * FROM APIConfigs WHERE CFGTenantID = ? AND CFGConfigID LIKE ?', [tenantID, apiConfigID], function (error, results, fields) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[0]));
+                }
+            });
+        });
     };
-    daHealthCheck.prototype.getAPIDataByTenantID = function (tenantID) {
+    daHealthCheck.prototype.addAPIData = function (apiStatusDetail) {
+        if (apiStatusDetail.configID == null || apiStatusDetail.configID < 1) {
+            throw new Error('Invalid ConfigID');
+        }
+        pool.query('INSERT INTO APIStatusDetails set ?', {
+            DTAConfigID: apiStatusDetail.configID,
+            DTADateTime: apiStatusDetail.dateTime == null ? moment.now() : apiStatusDetail.dateTime,
+            DTAPingResponseMS: apiStatusDetail.pingResponseMS == null ? 1000 : apiStatusDetail.pingResponseMS,
+            DTAStatus: apiStatusDetail.apiStatus == null ? APIStatusEnum_1.APIStatus.Unknown : apiStatusDetail.apiStatus
+        }, function (error, results, fields) {
+            console.log(error);
+            console.log(results);
+        });
     };
-    daHealthCheck.prototype.getAPIDataByAPIID = function (tenantID, apiConfigID) {
+    daHealthCheck.prototype.getAPIStatusDetailsByTenantID = function (tenantID) {
+        return new es6_promise_1.Promise(function (resolve, reject) {
+            pool.query('SELECT APIStatusDetails.* FROM APIStatusDetails JOIN APIConfigs ON APIStatusDetails.DTAConfigID = APIConfigs.CFGConfigID WHERE APIConfigs.CFGTenantID = ?', [tenantID], function (error, results, fields) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve(results);
+                }
+            });
+        });
     };
-    daHealthCheck.prototype.addAPIData = function (tenantID, apiConfigID, status, responseTimeMS) {
+    daHealthCheck.prototype.getAPIStatusDetailsByAPIID = function (apiConfigID) {
+        return new es6_promise_1.Promise(function (resolve, reject) {
+            pool.query('SELECT * FROM APIStatusDetails WHERE DTAConfigID = ?', [apiConfigID], function (error, results, fields) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve(results);
+                }
+            });
+        });
     };
     return daHealthCheck;
 }());

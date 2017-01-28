@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 
 
-const acctDetails = require('./acctDetails.json');
+const acctDetails = require('../acctDetails.json');
 var connection = mysql.createConnection({
     host: acctDetails.host,
     user: acctDetails.user,
@@ -50,7 +50,7 @@ createAPIConfig = function () {
     query += 'CFGTenantID INT NOT NULL,';
     query += 'CFGName VARCHAR(255) NOT NULL,';
     query += 'CFGURI VARCHAR(2083) NOT NULL,';
-    query += 'CFGEnabled BIT NOT NULL DEFAULT TRUE,';
+    query += 'CFGEnabled BOOLEAN NOT NULL DEFAULT TRUE,';
     query += 'CFGPollFrequencyInSeconds DECIMAL(9,4) NOT NULL,';
     query += 'CFGMaxResponseTimeMS INT NOT NULL DEFAULT 2000,';
     //TODO: update for ContactGroupID

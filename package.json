@@ -23,20 +23,31 @@
   },
   "dependencies": {
     "express": "~4.14.0",
-    "express-jwt": "~5.1.0",
+    "@types/express": "*",
     "morgan": "~1.7.0",
+    "@types/morgan": "*",
     "body-parser": "~1.15.2",
+    "@types/body-parser": "*",
     "mongoose": "~4.7.6",
+    "@types/mongoose": "*",
     "moment": "~2.17.1",
-    "aws-sdk": "~2.7.27",
-    "uuid": "~3.0.1"
+    "@types/moment": "*",
+    "uuid": "~3.0.1",
+    "@types/uuid": "*",
+    "mysql": "~2.13.0",
+    "@types/mysql": "*",
+    "@types/es6-promise": "*"
   },
   "devDependencies": {
-    "mocha": "~3.2.0",
-    "chai": "~3.5.0",
-    "chai-http": "~3.0.0"
+    "mocha": "~3.*",
+    "@types/mocha":"*",
+    "chai": "~3.*",
+    "@types/chai":"*",
+    "chai-http": "~3.*",
+    "@types/chai-http":"*"
   },
   "scripts": {
+    "start": "node mysql",
     "test": "mocha --reporter spec"
   }
 }

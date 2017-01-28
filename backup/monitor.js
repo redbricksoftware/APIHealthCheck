@@ -61,9 +61,9 @@ if (deploymentType == 'production') {
 
 
 } else {
-    apiMonitoringList = require('./sampleAPIConfig.json');
-    apiSummaryList = require('./sampleAPISummary.json');
-    apiDetailList = require('./sampleAPIDetail.json');
+    apiMonitoringList = require('./../sampleData/sampleAPIConfig.json');
+    apiSummaryList = require('./../sampleData/sampleAPISummary.json');
+    apiDetailList = require('./../sampleData/sampleAPIDetail.json');
 
     if (typeof (apiMonitoringList) != 'object') {
         apiMonitoringList = JSON.parse(apiMonitoringList);

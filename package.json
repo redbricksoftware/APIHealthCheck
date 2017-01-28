@@ -1,6 +1,6 @@
 {
   "name": "WebHealthCheckServer",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Monitor and log the status of APIs.",
   "keywords": [
     "API",
@@ -40,11 +40,11 @@
   },
   "devDependencies": {
     "mocha": "~3.*",
-    "@types/mocha":"*",
+    "@types/mocha": "*",
     "chai": "~3.*",
-    "@types/chai":"*",
+    "@types/chai": "*",
     "chai-http": "~3.*",
-    "@types/chai-http":"*"
+    "@types/chai-http": "*"
   },
   "scripts": {
     "start": "node mysql",

@@ -18,6 +18,7 @@ describe('APIConfig Class', function () {
             CFGEmergencyContactGroup: null
         };
         var apiConfig = APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(RowDataPacket);
+        console.log(apiConfig);
         chai_1.expect(apiConfig.configID).to.equal(1);
         chai_1.expect(apiConfig.tenantID).to.equal(2);
         chai_1.expect(apiConfig.name).to.equal('API2a');

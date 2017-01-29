@@ -23,6 +23,7 @@ describe('APIConfig Class', () => {
         };
 
         let apiConfig = APIConfig.mapMySQLResultsToAPIConfig(RowDataPacket);
+        console.log(apiConfig);
 
         expect(apiConfig.configID).to.equal(1);
         expect(apiConfig.tenantID).to.equal(2);

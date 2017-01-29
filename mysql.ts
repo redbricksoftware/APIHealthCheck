@@ -201,7 +201,7 @@ export class daHealthCheck {
         });
     };
 
-    addTenant(tenant: Tenant): Promise<Tenant> {
+    addTenant(tenant: Tenant): Promise<Number> {
         return new Promise(function (resolve, reject) {
 
             let query = 'INSERT INTO Tenants ';
@@ -215,7 +215,7 @@ export class daHealthCheck {
                     if (error) {
                         reject(error);
                     } else {
-                        resolve(results)
+                        resolve(results.insertId)
                     }
                 });
         });
@@ -241,26 +241,26 @@ export class daHealthCheck {
     };
 
 
-    addAPIConfig(apiConfigID: APIConfig) {
+    addAPIConfig(apiConfigID: APIConfig): Promise<Number> {
         return new Promise(function (resolve, reject) {
 
             let query = 'INSERT INTO APIConfigs ';
-            query += 'SET CFGName = ?, CFGURI = ?, CFGEnabled = ?, ';
+            query += 'SET CFGTenantID = ?, CFGName = ?, CFGURI = ?, CFGEnabled = ?, ';
             query += 'CFGPollFrequencyInSeconds = ?, CFGMaxResponseTimeMS = ? ';
-            query += 'WHERE CFGConfigID = ?';
 
             pool.query(query,
-                [apiConfigID.name,
+                [apiConfigID.tenantID,
+                    apiConfigID.name,
                     apiConfigID.uri,
                     apiConfigID.enabled,
                     apiConfigID.pollFrequencyInSeconds,
-                    apiConfigID.maxResponseTimeMS,
-                    apiConfigID.configID],
+                    apiConfigID.maxResponseTimeMS
+                ],
                 function (error, results, fields) {
                     if (error) {
                         reject(error);
                     } else {
-                        resolve(results)
+                        resolve(results.insertId)
                     }
                 });
         });
@@ -269,16 +269,18 @@ export class daHealthCheck {
     updateAPIConfig(apiConfigID: APIConfig) {
         return new Promise(function (resolve, reject) {
 
-            let query = 'UPDATE APIConfigs SET ?';
+            let query = 'UPDATE APIConfigs SET CFGName = ?, CFGURI = ?, CFGEnabled = ?, ';
+            query += 'CFGPollFrequencyInSeconds = ?, CFGMaxResponseTimeMS = ? ';
+            query += 'WHERE CFGConfigID = ? ';
 
-            pool.query(query, {
-                CFGName: apiConfigID.name,
-                CFGTenantID: apiConfigID.tenantID,
-                CFGURI: apiConfigID.uri,
-                CFGEnabled: apiConfigID.enabled,
-                CFGPollFrequencyInSeconds: apiConfigID.pollFrequencyInSeconds,
-                CFGMaxResponseTimeMS: apiConfigID.maxResponseTimeMS
-            }, function (error, results, fields) {
+            pool.query(query, [
+                apiConfigID.name,
+                apiConfigID.uri,
+                apiConfigID.enabled,
+                apiConfigID.pollFrequencyInSeconds,
+                apiConfigID.maxResponseTimeMS,
+                apiConfigID.configID
+            ], function (error, results, fields) {
                 if (error) {
                     reject(error);
                 } else {
@@ -409,7 +411,11 @@ export class daHealthCheck {
                     if (error) {
                         reject(error);
                     } else {
-                        resolve(results);
+                        let returnAPIStatusDetails = [];
+                        for (let i = 0; i < results.length; i++) {
+                            returnAPIStatusDetails.push(APIStatusDetail.mapMySQLResultsToAPIStatusDetail(results[i]));
+                        }
+                        resolve(returnAPIStatusDetails);
                     }
                 });
         });
@@ -427,7 +433,11 @@ export class daHealthCheck {
                     if (error) {
                         reject(error);
                     } else {
-                        resolve(results);
+                        let returnAPIStatusDetails = [];
+                        for (let i = 0; i < results.length; i++) {
+                            returnAPIStatusDetails.push(APIStatusDetail.mapMySQLResultsToAPIStatusDetail(results[i]));
+                        }
+                        resolve(returnAPIStatusDetails);
                     }
                 });
         });

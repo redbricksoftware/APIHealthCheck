@@ -34,6 +34,7 @@
     "@types/uuid": "*",
     "mysql": "~2.13.0",
     "@types/mysql": "*",
+    "es6-promise": "4.*",
     "@types/es6-promise": "*"
   },
   "devDependencies": {

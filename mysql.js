@@ -166,7 +166,7 @@ var daHealthCheck = (function () {
                     reject(error);
                 }
                 else {
-                    resolve(results);
+                    resolve(results.insertId);
                 }
             });
         });
@@ -190,20 +190,20 @@ var daHealthCheck = (function () {
     daHealthCheck.prototype.addAPIConfig = function (apiConfigID) {
         return new es6_promise_1.Promise(function (resolve, reject) {
             var query = 'INSERT INTO APIConfigs ';
-            query += 'SET CFGName = ?, CFGURI = ?, CFGEnabled = ?, ';
+            query += 'SET CFGTenantID = ?, CFGName = ?, CFGURI = ?, CFGEnabled = ?, ';
             query += 'CFGPollFrequencyInSeconds = ?, CFGMaxResponseTimeMS = ? ';
-            query += 'WHERE CFGConfigID = ?';
-            pool.query(query, [apiConfigID.name,
+            pool.query(query, [apiConfigID.tenantID,
+                apiConfigID.name,
                 apiConfigID.uri,
                 apiConfigID.enabled,
                 apiConfigID.pollFrequencyInSeconds,
-                apiConfigID.maxResponseTimeMS,
-                apiConfigID.configID], function (error, results, fields) {
+                apiConfigID.maxResponseTimeMS
+            ], function (error, results, fields) {
                 if (error) {
                     reject(error);
                 }
                 else {
-                    resolve(results);
+                    resolve(results.insertId);
                 }
             });
         });
@@ -211,15 +211,17 @@ var daHealthCheck = (function () {
     ;
     daHealthCheck.prototype.updateAPIConfig = function (apiConfigID) {
         return new es6_promise_1.Promise(function (resolve, reject) {
-            var query = 'UPDATE APIConfigs SET ?';
-            pool.query(query, {
-                CFGName: apiConfigID.name,
-                CFGTenantID: apiConfigID.tenantID,
-                CFGURI: apiConfigID.uri,
-                CFGEnabled: apiConfigID.enabled,
-                CFGPollFrequencyInSeconds: apiConfigID.pollFrequencyInSeconds,
-                CFGMaxResponseTimeMS: apiConfigID.maxResponseTimeMS
-            }, function (error, results, fields) {
+            var query = 'UPDATE APIConfigs SET CFGName = ?, CFGURI = ?, CFGEnabled = ?, ';
+            query += 'CFGPollFrequencyInSeconds = ?, CFGMaxResponseTimeMS = ? ';
+            query += 'WHERE CFGConfigID = ? ';
+            pool.query(query, [
+                apiConfigID.name,
+                apiConfigID.uri,
+                apiConfigID.enabled,
+                apiConfigID.pollFrequencyInSeconds,
+                apiConfigID.maxResponseTimeMS,
+                apiConfigID.configID
+            ], function (error, results, fields) {
                 if (error) {
                     reject(error);
                 }
@@ -331,7 +333,11 @@ var daHealthCheck = (function () {
                     reject(error);
                 }
                 else {
-                    resolve(results);
+                    var returnAPIStatusDetails = [];
+                    for (var i = 0; i < results.length; i++) {
+                        returnAPIStatusDetails.push(APIStatusDetail_1.APIStatusDetail.mapMySQLResultsToAPIStatusDetail(results[i]));
+                    }
+                    resolve(returnAPIStatusDetails);
                 }
             });
         });
@@ -345,7 +351,11 @@ var daHealthCheck = (function () {
                     reject(error);
                 }
                 else {
-                    resolve(results);
+                    var returnAPIStatusDetails = [];
+                    for (var i = 0; i < results.length; i++) {
+                        returnAPIStatusDetails.push(APIStatusDetail_1.APIStatusDetail.mapMySQLResultsToAPIStatusDetail(results[i]));
+                    }
+                    resolve(returnAPIStatusDetails);
                 }
             });
         });

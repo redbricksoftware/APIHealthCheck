@@ -9,7 +9,7 @@ var APIConfig = (function () {
             newAPIConfig.tenantID = val.CFGTenantID;
             newAPIConfig.name = val.CFGName;
             newAPIConfig.uri = val.CFGURI;
-            newAPIConfig.enabled = val.CFGEnabled;
+            newAPIConfig.enabled = (val.CFGEnabled === 'true' || val.CFGEnabled === 1) ? true : false;
             newAPIConfig.pollFrequencyInSeconds = val.CFGPollFrequencyInSeconds;
             newAPIConfig.maxResponseTimeMS = val.CFGMaxResponseTimeMS;
             newAPIConfig.emergencyContactGroup = val.CFGEmergencyContactGroup;

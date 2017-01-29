@@ -2,10 +2,11 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mysql_1 = require('./mysql');
-var APIConfig_1 = require("./models/APIConfig");
+var Config_1 = require("./models/Config");
 var util_1 = require("util");
-var APIStatusDetail_1 = require("./models/APIStatusDetail");
-var APIStatusEnum_1 = require('./models/APIStatusEnum');
+var StatusDetail_1 = require("./models/StatusDetail");
+var StatusEnum_1 = require('./models/StatusEnum');
+var StatusSummaryDaily_1 = require("./models/StatusSummaryDaily");
 var healthCheck = new mysql_1.daHealthCheck();
 var port = process.env.PORT || 3000;
 var deploymentType = process.env.NODE_ENV || 'development';
@@ -31,7 +32,7 @@ app.use(function (req, res, next) {
 // create application/x-www-form-urlencoded parser
 var urlEncodedParser = bodyParser.urlencoded({ extended: false });
 router.get('/v1/HealthCheckManagement', function (req, res) {
-    healthCheck.getAPIConfigAll()
+    healthCheck.getConfigAll()
         .then(function (resp) {
         res.json(resp);
     })
@@ -42,7 +43,7 @@ router.get('/v1/HealthCheckManagement', function (req, res) {
 router.get('/v1/HealthCheckManagement/:id', function (req, res) {
     //console.log('Get Specific Health Check: ' + req.params.id);
     //TODO: implement token and get tenant id from token.
-    healthCheck.getAPIConfigByID(1, req.params.id)
+    healthCheck.getConfigByID(1, req.params.id)
         .then(function (resp) {
         res.json(resp);
     })
@@ -53,19 +54,19 @@ router.get('/v1/HealthCheckManagement/:id', function (req, res) {
 //TODO: post add new health checks
 //Include urlEncodedParser to read req.body and parse to json.
 router.post('/v1/HealthCheckManagement', urlEncodedParser, function (req, res) {
-    var apiConfig = new APIConfig_1.APIConfig;
+    var config = new Config_1.Config;
     if ((!util_1.isNullOrUndefined(req.body.name) && req.body.name.toString().trim() != '') && (!util_1.isNullOrUndefined(req.body.uri) && req.body.uri.toString().trim() != '')) {
-        apiConfig.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
-        apiConfig.maxResponseTimeMS = util_1.isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS;
-        apiConfig.pollFrequencyInSeconds = util_1.isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds;
-        apiConfig.name = req.body.name;
-        apiConfig.uri = req.body.uri;
-        apiConfig.tenantID = req.body.tenantID; //TODO: update tenant ID from JWT
+        config.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
+        config.maxResponseTimeMS = util_1.isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS;
+        config.pollFrequencyInSeconds = util_1.isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds;
+        config.name = req.body.name;
+        config.uri = req.body.uri;
+        config.tenantID = req.body.tenantID; //TODO: update tenant ID from JWT
     }
-    healthCheck.addAPIConfig(apiConfig)
+    healthCheck.addConfig(config)
         .then(function (resp) {
-        apiConfig.configID = resp;
-        res.json(apiConfig);
+        config.configID = resp;
+        res.json(config);
     })
         .catch(function (err) {
         console.error(err);
@@ -76,20 +77,20 @@ router.post('/v1/HealthCheckManagement', urlEncodedParser, function (req, res) {
 router.put('/v1/HealthCheckManagement/:id', urlEncodedParser, function (req, res) {
     console.log(req.body);
     console.log(req.params.id);
-    var apiConfig = new APIConfig_1.APIConfig;
+    var config = new Config_1.Config;
     if ((!util_1.isNullOrUndefined(req.body.name) && req.body.name.toString().trim() != '') && (!util_1.isNullOrUndefined(req.body.uri) && req.body.uri.toString().trim() != '')) {
-        apiConfig.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
-        apiConfig.maxResponseTimeMS = Number(util_1.isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS);
-        apiConfig.pollFrequencyInSeconds = Number(util_1.isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds);
-        apiConfig.name = req.body.name;
-        apiConfig.uri = req.body.uri;
-        apiConfig.configID = Number(req.params.id);
+        config.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
+        config.maxResponseTimeMS = Number(util_1.isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS);
+        config.pollFrequencyInSeconds = Number(util_1.isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds);
+        config.name = req.body.name;
+        config.uri = req.body.uri;
+        config.configID = Number(req.params.id);
         //TODO: update tenant ID from JWT
-        apiConfig.tenantID = 1;
+        config.tenantID = 1;
     }
-    healthCheck.updateAPIConfig(apiConfig)
+    healthCheck.updateConfig(config)
         .then(function (resp) {
-        res.json(apiConfig);
+        res.json(config);
     })
         .catch(function (err) {
         console.error(err);
@@ -104,7 +105,7 @@ router.put('/v1/HealthCheckManagement/:id', urlEncodedParser, function (req, res
  });
  */
 router.get('/v1/HealthCheckDetails', function (req, res) {
-    healthCheck.getAPIStatusDetailsByTenantID(1)
+    healthCheck.getStatusDetailsByTenantID(1)
         .then(function (resp) {
         res.json(resp);
     })
@@ -113,38 +114,95 @@ router.get('/v1/HealthCheckDetails', function (req, res) {
     });
 });
 router.post('/v1/HealthCheckDetails/', urlEncodedParser, function (req, res) {
-    var apiStatusDetail = new APIStatusDetail_1.APIStatusDetail;
-    //newAPIStatusDetail.dataID = req.body..DTADataID;
-    apiStatusDetail.configID = Number(req.body.configID);
-    apiStatusDetail.dateTime = new Date(req.body.dateTime);
-    apiStatusDetail.pingResponseMS = Number(req.body.pingResponseMS);
-    switch (req.body.apiStatus.toString().toLowerCase()) {
-        case 'up':
-            apiStatusDetail.apiStatus = APIStatusEnum_1.APIStatus.Up;
-            break;
-        case '1':
-            apiStatusDetail.apiStatus = APIStatusEnum_1.APIStatus.Up;
-            break;
-        case 'down':
-            apiStatusDetail.apiStatus = APIStatusEnum_1.APIStatus.Down;
-            break;
-        case '2':
-            apiStatusDetail.apiStatus = APIStatusEnum_1.APIStatus.Down;
-            break;
-        case 'degraded':
-            apiStatusDetail.apiStatus = APIStatusEnum_1.APIStatus.Degraded;
-            break;
-        case '3':
-            apiStatusDetail.apiStatus = APIStatusEnum_1.APIStatus.Degraded;
-            break;
-        default:
-            apiStatusDetail.apiStatus = APIStatusEnum_1.APIStatus.Unknown;
-            break;
+    var statusDetail = new StatusDetail_1.StatusDetail;
+    statusDetail.configID = Number(req.body.configID);
+    statusDetail.dateTime = new Date(req.body.dateTime);
+    statusDetail.pingResponseMS = Number(req.body.pingResponseMS);
+    if (!req.body.status) {
+        statusDetail.status = StatusEnum_1.StatusEnum.Unknown;
     }
-    healthCheck.addAPIData(apiStatusDetail)
+    else {
+        switch (req.body.status.toString().toLowerCase()) {
+            case 'up':
+                statusDetail.status = StatusEnum_1.StatusEnum.Up;
+                break;
+            case '1':
+                statusDetail.status = StatusEnum_1.StatusEnum.Up;
+                break;
+            case 'down':
+                statusDetail.status = StatusEnum_1.StatusEnum.Down;
+                break;
+            case '2':
+                statusDetail.status = StatusEnum_1.StatusEnum.Down;
+                break;
+            case 'degraded':
+                statusDetail.status = StatusEnum_1.StatusEnum.Degraded;
+                break;
+            case '3':
+                statusDetail.status = StatusEnum_1.StatusEnum.Degraded;
+                break;
+            default:
+                statusDetail.status = StatusEnum_1.StatusEnum.Unknown;
+                break;
+        }
+    }
+    healthCheck.addStatusDetail(statusDetail)
         .then(function (resp) {
-        apiStatusDetail.dataID = resp;
-        res.json(apiStatusDetail);
+        statusDetail.dataID = resp;
+        res.json(statusDetail);
+    })
+        .catch(function (err) {
+        console.error(err);
+        res.json(err);
+    });
+});
+router.get('/v1/HealthCheckSummary', function (req, res) {
+    healthCheck.getStatusSummaryByTenantID(1)
+        .then(function (resp) {
+        res.json(resp);
+    })
+        .catch(function (err) {
+        res.json(err);
+    });
+});
+router.post('/v1/HealthCheckSummary/', urlEncodedParser, function (req, res) {
+    var statusSummaryDaily = new StatusSummaryDaily_1.StatusSummaryDaily;
+    statusSummaryDaily.configID = Number(req.body.configID);
+    statusSummaryDaily.date = new Date(req.body.date);
+    statusSummaryDaily.averagePingResponseMS = Number(req.body.averagePingResponseMS);
+    statusSummaryDaily.uptimePercent = Number(req.body.uptimePercent);
+    if (!req.body.status) {
+        statusSummaryDaily.status = StatusEnum_1.StatusEnum.Unknown;
+    }
+    else {
+        switch (req.body.status.toString().toLowerCase()) {
+            case 'up':
+                statusSummaryDaily.status = StatusEnum_1.StatusEnum.Up;
+                break;
+            case '1':
+                statusSummaryDaily.status = StatusEnum_1.StatusEnum.Up;
+                break;
+            case 'down':
+                statusSummaryDaily.status = StatusEnum_1.StatusEnum.Down;
+                break;
+            case '2':
+                statusSummaryDaily.status = StatusEnum_1.StatusEnum.Down;
+                break;
+            case 'degraded':
+                statusSummaryDaily.status = StatusEnum_1.StatusEnum.Degraded;
+                break;
+            case '3':
+                statusSummaryDaily.status = StatusEnum_1.StatusEnum.Degraded;
+                break;
+            default:
+                statusSummaryDaily.status = StatusEnum_1.StatusEnum.Unknown;
+                break;
+        }
+    }
+    healthCheck.addStatusSummary(statusSummaryDaily)
+        .then(function (resp) {
+        statusSummaryDaily.summaryID = resp;
+        res.json(statusSummaryDaily);
     })
         .catch(function (err) {
         console.error(err);

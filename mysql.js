@@ -11,143 +11,16 @@ var pool = mysql.createPool({
     password: acctDetails.password,
     database: acctDetails.database
 });
-var APIConfig_1 = require('./models/APIConfig');
-var APIStatusDetail_1 = require('./models/APIStatusDetail');
-var APIStatusEnum_1 = require('./models/APIStatusEnum');
+var Config_1 = require('./models/Config');
+var StatusDetail_1 = require('./models/StatusDetail');
+var StatusEnum_1 = require('./models/StatusEnum');
 var util_1 = require("util");
+var StatusSummaryDaily_1 = require("./models/StatusSummaryDaily");
 var daHealthCheck = (function () {
     function daHealthCheck() {
         this.init();
     }
     daHealthCheck.prototype.init = function () {
-        var createUsers = function () {
-            pool.query('INSERT INTO Users SET USRIdentityUserID=?', 'identity1', function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO Users SET USRIdentityUserID=?', 'identity2', function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-        };
-        //createUsers();
-        var createTenants = function () {
-            pool.query('INSERT INTO Tenants SET ?', {
-                TNTName: 'Tenant1',
-                TNTCode: 'TNT1',
-                TNTPrimaryUserID: 1
-            }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO Tenants SET ?', {
-                TNTName: 'Tenant2',
-                TNTCode: 'TNT2',
-                TNTPrimaryUserID: 2
-            }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-        };
-        //createTenants();
-        var createAPIConfigs = function () {
-            pool.query('INSERT INTO APIConfigs SET ?', {
-                CFGName: 'API1a', CFGTenantID: 1, CFGURI: 'http://google.com',
-                CFGEnabled: true, CFGPollFrequencyInSeconds: 60, CFGMaxResponseTimeMS: 2000
-            }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO APIConfigs SET ?', {
-                CFGName: 'API1b', CFGTenantID: 1, CFGURI: 'http://google2.com',
-                CFGEnabled: true, CFGPollFrequencyInSeconds: 120, CFGMaxResponseTimeMS: 2000
-            }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO APIConfigs SET ?', {
-                CFGName: 'API1c', CFGTenantID: 1, CFGURI: 'http://google3.com',
-                CFGEnabled: true, CFGPollFrequencyInSeconds: 240, CFGMaxResponseTimeMS: 2000
-            }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO APIConfigs SET ?', {
-                CFGName: 'API2a', CFGTenantID: 2, CFGURI: 'http://yahoo.com',
-                CFGEnabled: true, CFGPollFrequencyInSeconds: 60, CFGMaxResponseTimeMS: 2000
-            }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO APIConfigs SET ?', {
-                CFGName: 'API2b', CFGTenantID: 2, CFGURI: 'http://yahoo2.com',
-                CFGEnabled: true, CFGPollFrequencyInSeconds: 120, CFGMaxResponseTimeMS: 2000
-            }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO APIConfigs SET ?', {
-                CFGName: 'API2c', CFGTenantID: 2, CFGURI: 'http://yahoo.com',
-                CFGEnabled: true, CFGPollFrequencyInSeconds: 240, CFGMaxResponseTimeMS: 2000
-            }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-        };
-        //createAPIConfigs();
-        var insertAPIStatus = function () {
-            pool.query('INSERT INTO APIStatusDetails SET ?', { DTAConfigID: 1, DTADateTime: '2016-12-31 00:00:15', DTAPingResponseMS: 425, DTAStatus: 1 }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO APIStatusDetails SET ?', { DTAConfigID: 1, DTADateTime: '2016-12-31 00:00:30', DTAPingResponseMS: 550, DTAStatus: 1 }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO APIStatusDetails SET ?', { DTAConfigID: 1, DTADateTime: '2016-12-31 00:00:45', DTAPingResponseMS: 375, DTAStatus: 1 }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-            pool.query('INSERT INTO APIStatusDetails SET ?', { DTAConfigID: 1, DTADateTime: '2016-12-31 00:01:00', DTAPingResponseMS: 375, DTAStatus: 1 }, function (error, results, fields) {
-                console.log(error);
-                console.log(results);
-            });
-        };
-        //insertAPIStatus();
-        var me = this;
-        var insertAFewSampleStatus = function () {
-            var now = new Date();
-            now = addMinutes(now, 120);
-            for (var i = 0; i < 10; i++) {
-                var randNum = Math.random();
-                var pingResponse = Math.floor(randNum * 1200) + 350;
-                var apiStatus = APIStatusEnum_1.APIStatus.Up;
-                if (randNum >= .8 && randNum < .92) {
-                    apiStatus = APIStatusEnum_1.APIStatus.Degraded;
-                }
-                else if (randNum >= .92 && randNum < .96) {
-                    apiStatus = APIStatusEnum_1.APIStatus.Down;
-                }
-                else if (randNum >= .96) {
-                    apiStatus = APIStatusEnum_1.APIStatus.Unknown;
-                }
-                var statusDetail = new APIStatusDetail_1.APIStatusDetail();
-                statusDetail.configID = 2;
-                statusDetail.pingResponseMS = pingResponse;
-                statusDetail.apiStatus = apiStatus;
-                statusDetail.dateTime = now;
-                now = addMinutes(now, 5);
-                console.log(statusDetail);
-                me.addAPIData(statusDetail)
-                    .then(function (resp) {
-                    console.log(resp);
-                });
-            }
-            function addMinutes(date, minutes) {
-                return new Date(date.getTime() + minutes * 60000);
-            }
-        };
-        //insertAFewSampleStatus();
     };
     daHealthCheck.prototype.closePool = function () {
         pool.end(function (err) {
@@ -187,17 +60,18 @@ var daHealthCheck = (function () {
         });
     };
     ;
-    daHealthCheck.prototype.addAPIConfig = function (apiConfigID) {
+    //TODO: CFGEmergencyContactGroupID
+    daHealthCheck.prototype.addConfig = function (config) {
         return new es6_promise_1.Promise(function (resolve, reject) {
-            var query = 'INSERT INTO APIConfigs ';
+            var query = 'INSERT INTO Configs ';
             query += 'SET CFGTenantID = ?, CFGName = ?, CFGURI = ?, CFGEnabled = ?, ';
             query += 'CFGPollFrequencyInSeconds = ?, CFGMaxResponseTimeMS = ? ';
-            pool.query(query, [apiConfigID.tenantID,
-                apiConfigID.name,
-                apiConfigID.uri,
-                apiConfigID.enabled,
-                apiConfigID.pollFrequencyInSeconds,
-                apiConfigID.maxResponseTimeMS
+            pool.query(query, [config.tenantID,
+                config.name,
+                config.uri,
+                config.enabled,
+                config.pollFrequencyInSeconds,
+                config.maxResponseTimeMS
             ], function (error, results, fields) {
                 if (error) {
                     reject(error);
@@ -209,18 +83,18 @@ var daHealthCheck = (function () {
         });
     };
     ;
-    daHealthCheck.prototype.updateAPIConfig = function (apiConfigID) {
+    daHealthCheck.prototype.updateConfig = function (config) {
         return new es6_promise_1.Promise(function (resolve, reject) {
-            var query = 'UPDATE APIConfigs SET CFGName = ?, CFGURI = ?, CFGEnabled = ?, ';
+            var query = 'UPDATE Configs SET CFGName = ?, CFGURI = ?, CFGEnabled = ?, ';
             query += 'CFGPollFrequencyInSeconds = ?, CFGMaxResponseTimeMS = ? ';
             query += 'WHERE CFGConfigID = ? ';
             pool.query(query, [
-                apiConfigID.name,
-                apiConfigID.uri,
-                apiConfigID.enabled,
-                apiConfigID.pollFrequencyInSeconds,
-                apiConfigID.maxResponseTimeMS,
-                apiConfigID.configID
+                config.name,
+                config.uri,
+                config.enabled,
+                config.pollFrequencyInSeconds,
+                config.maxResponseTimeMS,
+                config.configID
             ], function (error, results, fields) {
                 if (error) {
                     reject(error);
@@ -232,44 +106,44 @@ var daHealthCheck = (function () {
         });
     };
     ;
-    daHealthCheck.prototype.getAPIConfigAll = function () {
+    daHealthCheck.prototype.getConfigAll = function () {
         return new es6_promise_1.Promise(function (resolve, reject) {
-            var query = 'SELECT * FROM APIConfigs';
+            var query = 'SELECT * FROM Configs';
             pool.query(query, function (error, results, fields) {
                 if (error) {
                     reject(error);
                 }
                 else {
-                    var returnAPIConfigs = [];
+                    var returnConfigs = [];
                     for (var i = 0; i < results.length; i++) {
-                        returnAPIConfigs.push(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[i]));
+                        returnConfigs.push(Config_1.Config.mapMySQLResultsToConfig(results[i]));
                     }
-                    resolve(returnAPIConfigs);
+                    resolve(returnConfigs);
                 }
             });
         });
     };
     ;
-    daHealthCheck.prototype.getAPIConfigByTenantID = function (tenantID) {
-        var query = 'SELECT * FROM APIConfigs WHERE CFGTenantID = ?';
+    daHealthCheck.prototype.getConfigByTenantID = function (tenantID) {
+        var query = 'SELECT * FROM Configs WHERE CFGTenantID = ?';
         return new es6_promise_1.Promise(function (resolve, reject) {
             pool.query(query, tenantID, function (error, results, fields) {
                 if (error) {
                     reject(error);
                 }
                 else {
-                    var returnAPIConfigs = [];
+                    var returnConfigs = [];
                     for (var i = 0; i < results.length; i++) {
-                        returnAPIConfigs.push(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[i]));
+                        returnConfigs.push(Config_1.Config.mapMySQLResultsToConfig(results[i]));
                     }
-                    resolve(returnAPIConfigs);
+                    resolve(returnConfigs);
                 }
             });
         });
     };
     ;
-    daHealthCheck.prototype.getAPIConfigByName = function (tenantID, name) {
-        var query = 'SELECT * FROM APIConfigs WHERE CFGTenantID = ? AND CFGName LIKE ?';
+    daHealthCheck.prototype.getConfigByName = function (tenantID, name) {
+        var query = 'SELECT * FROM Configs WHERE CFGTenantID = ? AND CFGName LIKE ?';
         return new es6_promise_1.Promise(function (resolve, reject) {
             pool.query(query, [tenantID,
                 '%' + name + '%'], function (error, results, fields) {
@@ -277,41 +151,41 @@ var daHealthCheck = (function () {
                     reject(error);
                 }
                 else {
-                    var returnAPIConfigs = [];
+                    var returnConfigs = [];
                     for (var i = 0; i < results.length; i++) {
-                        returnAPIConfigs.push(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[i]));
+                        returnConfigs.push(Config_1.Config.mapMySQLResultsToConfig(results[i]));
                     }
-                    resolve(returnAPIConfigs);
+                    resolve(returnConfigs);
                 }
             });
         });
     };
     ;
-    daHealthCheck.prototype.getAPIConfigByID = function (tenantID, apiConfigID) {
-        var query = 'SELECT * FROM APIConfigs WHERE CFGTenantID = ? AND CFGConfigID LIKE ?';
+    daHealthCheck.prototype.getConfigByID = function (tenantID, config) {
+        var query = 'SELECT * FROM Configs WHERE CFGTenantID = ? AND CFGConfigID LIKE ?';
         return new es6_promise_1.Promise(function (resolve, reject) {
-            pool.query(query, [tenantID, apiConfigID], function (error, results, fields) {
+            pool.query(query, [tenantID, config], function (error, results, fields) {
                 if (error) {
                     reject(error);
                 }
                 else {
-                    resolve(APIConfig_1.APIConfig.mapMySQLResultsToAPIConfig(results[0]));
+                    resolve(Config_1.Config.mapMySQLResultsToConfig(results[0]));
                 }
             });
         });
     };
     ;
-    daHealthCheck.prototype.addAPIData = function (apiStatusDetail) {
-        if (apiStatusDetail.configID == null || apiStatusDetail.configID < 1) {
+    daHealthCheck.prototype.addStatusDetail = function (statusDetail) {
+        if (statusDetail.configID == null || statusDetail.configID < 1) {
             throw new Error('Invalid ConfigID');
         }
         return new es6_promise_1.Promise(function (resolve, reject) {
-            var query = 'INSERT INTO APIStatusDetails SET ?';
+            var query = 'INSERT INTO StatusDetails SET ?';
             pool.query(query, {
-                DTAConfigID: apiStatusDetail.configID,
-                DTADateTime: apiStatusDetail.dateTime == null ? moment.now() : apiStatusDetail.dateTime,
-                DTAPingResponseMS: apiStatusDetail.pingResponseMS == null ? 1000 : apiStatusDetail.pingResponseMS,
-                DTAStatus: apiStatusDetail.apiStatus == null ? APIStatusEnum_1.APIStatus.Unknown : apiStatusDetail.apiStatus
+                DTAConfigID: statusDetail.configID,
+                DTADateTime: statusDetail.dateTime == null ? moment.now() : statusDetail.dateTime,
+                DTAPingResponseMS: statusDetail.pingResponseMS == null ? 1000 : statusDetail.pingResponseMS,
+                DTAStatus: statusDetail.status == null ? StatusEnum_1.StatusEnum.Unknown : statusDetail.status
             }, function (error, results, fields) {
                 if (error) {
                     reject(error);
@@ -323,44 +197,108 @@ var daHealthCheck = (function () {
         });
     };
     ;
-    daHealthCheck.prototype.getAPIStatusDetailsByTenantID = function (tenantID) {
+    daHealthCheck.prototype.getStatusDetailsByTenantID = function (tenantID) {
         return new es6_promise_1.Promise(function (resolve, reject) {
-            var query = 'SELECT APIStatusDetails.* FROM APIStatusDetails ';
-            query += 'JOIN APIConfigs ON APIStatusDetails.DTAConfigID = APIConfigs.CFGConfigID ';
-            query += 'WHERE APIConfigs.CFGTenantID = ?';
+            var query = 'SELECT StatusDetails.* FROM StatusDetails ';
+            query += 'JOIN Configs ON StatusDetails.DTAConfigID = Configs.CFGConfigID ';
+            query += 'WHERE Configs.CFGTenantID = ?';
             pool.query(query, [tenantID], function (error, results, fields) {
                 if (error) {
                     reject(error);
                 }
                 else {
-                    var returnAPIStatusDetails = [];
+                    var returnStatusDetails = [];
                     for (var i = 0; i < results.length; i++) {
-                        returnAPIStatusDetails.push(APIStatusDetail_1.APIStatusDetail.mapMySQLResultsToAPIStatusDetail(results[i]));
+                        returnStatusDetails.push(StatusDetail_1.StatusDetail.mapMySQLResultsToStatusDetail(results[i]));
                     }
-                    resolve(returnAPIStatusDetails);
+                    resolve(returnStatusDetails);
                 }
             });
         });
     };
     ;
-    daHealthCheck.prototype.getAPIStatusDetailsByAPIID = function (apiConfigID) {
+    daHealthCheck.prototype.getStatusDetailsByID = function (configID) {
         return new es6_promise_1.Promise(function (resolve, reject) {
-            var query = 'SELECT * FROM APIStatusDetails WHERE DTAConfigID = ?';
-            pool.query(query, [apiConfigID], function (error, results, fields) {
+            var query = 'SELECT * FROM StatusDetails WHERE DTAConfigID = ?';
+            pool.query(query, [configID], function (error, results, fields) {
                 if (error) {
                     reject(error);
                 }
                 else {
-                    var returnAPIStatusDetails = [];
+                    var returnStatusDetails = [];
                     for (var i = 0; i < results.length; i++) {
-                        returnAPIStatusDetails.push(APIStatusDetail_1.APIStatusDetail.mapMySQLResultsToAPIStatusDetail(results[i]));
+                        returnStatusDetails.push(StatusDetail_1.StatusDetail.mapMySQLResultsToStatusDetail(results[i]));
                     }
-                    resolve(returnAPIStatusDetails);
+                    resolve(returnStatusDetails);
                 }
             });
         });
     };
     ;
+    daHealthCheck.prototype.addStatusSummary = function (statusSummary) {
+        return new es6_promise_1.Promise(function (resolve, reject) {
+            if (util_1.isNullOrUndefined(statusSummary.configID)
+                || util_1.isNullOrUndefined(statusSummary.date)
+                || util_1.isNullOrUndefined(statusSummary.averagePingResponseMS)
+                || util_1.isNullOrUndefined(statusSummary.status)
+                || util_1.isNullOrUndefined(statusSummary.uptimePercent)) {
+                reject('Missing required information!');
+            }
+            var query = 'INSERT INTO StatusSummaryDaily SET ?';
+            pool.query(query, {
+                SSDConfigID: statusSummary.configID,
+                SSDDate: statusSummary.date,
+                SSDAveragePingResponseMS: statusSummary.averagePingResponseMS,
+                SSDStatus: statusSummary.status,
+                SSDUptimePercent: statusSummary.uptimePercent
+            }, function (error, results, fields) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve(results.insertId);
+                }
+            });
+        });
+    };
+    ;
+    daHealthCheck.prototype.getStatusSummaryByTenantID = function (tenantID) {
+        return new es6_promise_1.Promise(function (resolve, reject) {
+            var query = 'SELECT StatusSummaryDaily.* ';
+            query += 'FROM StatusSummaryDaily ';
+            query += 'JOIN Configs ON StatusSummaryDaily.SSDConfigID = Configs.CFGConfigID ';
+            query += 'WHERE CFGTenantID = ? ';
+            pool.query(query, [tenantID], function (error, results, fields) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    var returnStatusSummaryDaily = [];
+                    for (var i = 0; i < results.length; i++) {
+                        returnStatusSummaryDaily.push(StatusSummaryDaily_1.StatusSummaryDaily.mapMySQLResultsToStatusSummaryDaily(results[i]));
+                    }
+                    resolve(returnStatusSummaryDaily);
+                }
+            });
+        });
+    };
+    daHealthCheck.prototype.getStatusSummaryByConfigID = function (configID) {
+        return new es6_promise_1.Promise(function (resolve, reject) {
+            var query = 'SELECT * FROM StatusSummaryDaily WHERE SSDConfigID = ?';
+            pool.query(query, [configID], function (error, results, fields) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    var returnStatusSummaryDaily = [];
+                    for (var i = 0; i < results.length; i++) {
+                        returnStatusSummaryDaily.push(StatusSummaryDaily_1.StatusSummaryDaily.mapMySQLResultsToStatusSummaryDaily(results[i]));
+                    }
+                    resolve(returnStatusSummaryDaily);
+                }
+            });
+        });
+    };
     return daHealthCheck;
 }());
 exports.daHealthCheck = daHealthCheck;

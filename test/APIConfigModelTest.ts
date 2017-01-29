@@ -1,15 +1,15 @@
-import {APIConfig} from '../models/APIConfig';
+import {Config} from '../models/Config';
 import {expect} from 'chai';
 import {isObject} from "util";
 import {isNullOrUndefined} from "util";
 
 describe('APIConfig Class', () => {
     it('should be an object', () => {
-        let apiConfig = new APIConfig();
-        expect(apiConfig).to.be.an('object');
+        let config = new Config();
+        expect(config).to.be.an('object');
     });
 
-    it('should convert a mysql Object to APIConfig Object', () => {
+    it('should convert a mysql Object to Config Object', () => {
 
         let RowDataPacket = {
             CFGConfigID: 1,
@@ -19,26 +19,96 @@ describe('APIConfig Class', () => {
             CFGEnabled: true,
             CFGPollFrequencyInSeconds: 60,
             CFGMaxResponseTimeMS: 2000,
-            CFGEmergencyContactGroup: null
+            CFGEmergencyContactGroupID: null
         };
 
-        let apiConfig = APIConfig.mapMySQLResultsToAPIConfig(RowDataPacket);
-        console.log(apiConfig);
+        let config = Config.mapMySQLResultsToConfig(RowDataPacket);
 
-        expect(apiConfig.configID).to.equal(1);
-        expect(apiConfig.tenantID).to.equal(2);
-        expect(apiConfig.name).to.equal('API2a');
-        expect(apiConfig.uri).to.equal('http://yahoo.com');
-        expect(apiConfig.enabled).to.equal(true);
-        expect(apiConfig.pollFrequencyInSeconds).to.equal(60);
-        expect(apiConfig.maxResponseTimeMS).to.equal(2000);
-        expect(apiConfig.emergencyContactGroup).to.be.a('null');
+        expect(config.configID).to.equal(1);
+        expect(config.tenantID).to.equal(2);
+        expect(config.name).to.equal('API2a');
+        expect(config.uri).to.equal('http://yahoo.com');
+        expect(config.enabled).to.equal(true);
+        expect(config.pollFrequencyInSeconds).to.equal(60);
+        expect(config.maxResponseTimeMS).to.equal(2000);
+        expect(config.emergencyContactGroupID).to.be.a('null');
     });
 
     it('should convert a mysql null Object to a blank APIConfig Object', () => {
         let RowDataPacket = null;
-        let apiConfig = APIConfig.mapMySQLResultsToAPIConfig(RowDataPacket);
+        let config = Config.mapMySQLResultsToConfig(RowDataPacket);
 
-        expect(apiConfig).to.be.null;
+        expect(config).to.be.null;
     });
+
+    let config: Config = new Config();
+
+    config.validate()
+        .then(function (resp) {
+
+        })
+        .catch(function (err) {
+            it('should validate a configuration object', () => {
+                expect(err).to.be.an('array');
+                expect(err).to.deep.include.members([
+                    {
+                        field: 'tenantID',
+                        errorMessage: 'tenantID is a required field.',
+                        errorType: 99
+                    },
+                    {
+                        field: 'name',
+                        errorMessage: 'name is a required field.',
+                        errorType: 99
+                    },
+                    {
+                        field: 'uri',
+                        errorMessage: 'uri is a required field.',
+                        errorType: 99
+                    },
+                    {
+                        field: 'uri',
+                        errorMessage: 'uri is not valid.',
+                        errorType: 99
+                    },
+                    {
+                        field: 'enabled',
+                        errorMessage: 'enabled was not provided.',
+                        errorType: 1
+                    },
+                    {
+                        field: 'pollFrequencyInSeconds',
+                        errorMessage: 'pollFrequencyInSeconds is a required field.',
+                        errorType: 99
+                    },
+                    {
+                        field: 'maxResponseTimeMS',
+                        errorMessage: 'maxResponseTimeMS is a required field.',
+                        errorType: 99
+                    }
+                ]);
+            });
+        });
+
+
+    config.configID = 1;
+    config.tenantID = 2;
+    config.name = 'API2a';
+    config.uri ='http://yahoo.com';
+    config.enabled=true;
+    config.pollFrequencyInSeconds= 60;
+    config.maxResponseTimeMS= 2000;
+
+    config.validate()
+        .then(function(resp){
+            it('should be valid after setting the values correctly', () =>{
+                expect(resp).to.equal(true);
+            });
+        })
+        .catch(function(err){
+            it('should not call this', () =>{
+                expect(false).to.equal(true);
+            })
+        });
+
 });

@@ -3,10 +3,11 @@ import path = require('path');
 import logger = require('morgan');
 import bodyParser = require('body-parser');
 import {daHealthCheck} from './mysql';
-import {APIConfig} from "./models/APIConfig";
+import {Config} from "./models/Config";
 import {isNullOrUndefined} from "util";
-import {APIStatusDetail} from "./models/APIStatusDetail";
-import {APIStatus} from './models/APIStatusEnum';
+import {StatusDetail} from "./models/StatusDetail";
+import {StatusEnum} from './models/StatusEnum';
+import {StatusSummaryDaily} from "./models/StatusSummaryDaily";
 
 const healthCheck = new daHealthCheck();
 
@@ -45,7 +46,7 @@ let urlEncodedParser = bodyParser.urlencoded({extended: false})
 
 
 router.get('/v1/HealthCheckManagement', function (req, res) {
-    healthCheck.getAPIConfigAll()
+    healthCheck.getConfigAll()
         .then(function (resp) {
             res.json(resp);
         })
@@ -59,7 +60,7 @@ router.get('/v1/HealthCheckManagement/:id', function (req, res) {
     //console.log('Get Specific Health Check: ' + req.params.id);
 
     //TODO: implement token and get tenant id from token.
-    healthCheck.getAPIConfigByID(1, req.params.id)
+    healthCheck.getConfigByID(1, req.params.id)
         .then(function (resp) {
             res.json(resp);
         })
@@ -72,21 +73,21 @@ router.get('/v1/HealthCheckManagement/:id', function (req, res) {
 //Include urlEncodedParser to read req.body and parse to json.
 router.post('/v1/HealthCheckManagement', urlEncodedParser, function (req, res) {
 
-    let apiConfig: APIConfig = new APIConfig;
+    let config: Config = new Config;
 
     if ((!isNullOrUndefined(req.body.name) && req.body.name.toString().trim() != '') && (!isNullOrUndefined(req.body.uri) && req.body.uri.toString().trim() != '')) {
-        apiConfig.enabled = isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
-        apiConfig.maxResponseTimeMS = isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS;
-        apiConfig.pollFrequencyInSeconds = isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds;
-        apiConfig.name = req.body.name;
-        apiConfig.uri = req.body.uri;
-        apiConfig.tenantID = req.body.tenantID; //TODO: update tenant ID from JWT
+        config.enabled = isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
+        config.maxResponseTimeMS = isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS;
+        config.pollFrequencyInSeconds = isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds;
+        config.name = req.body.name;
+        config.uri = req.body.uri;
+        config.tenantID = req.body.tenantID; //TODO: update tenant ID from JWT
     }
 
-    healthCheck.addAPIConfig(apiConfig)
+    healthCheck.addConfig(config)
         .then(function (resp: number) {
-            apiConfig.configID = resp;
-            res.json(apiConfig);
+            config.configID = resp;
+            res.json(config);
         })
         .catch(function (err: Object) {
             console.error(err);
@@ -99,22 +100,22 @@ router.put('/v1/HealthCheckManagement/:id', urlEncodedParser, function (req, res
 
     console.log(req.body);
     console.log(req.params.id);
-    let apiConfig: APIConfig = new APIConfig;
+    let config: Config = new Config;
 
     if ((!isNullOrUndefined(req.body.name) && req.body.name.toString().trim() != '') && (!isNullOrUndefined(req.body.uri) && req.body.uri.toString().trim() != '')) {
-        apiConfig.enabled = isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
-        apiConfig.maxResponseTimeMS = Number(isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS);
-        apiConfig.pollFrequencyInSeconds = Number(isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds);
-        apiConfig.name = req.body.name;
-        apiConfig.uri = req.body.uri;
-        apiConfig.configID = Number(req.params.id);
+        config.enabled = isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
+        config.maxResponseTimeMS = Number(isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS);
+        config.pollFrequencyInSeconds = Number(isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds);
+        config.name = req.body.name;
+        config.uri = req.body.uri;
+        config.configID = Number(req.params.id);
         //TODO: update tenant ID from JWT
-        apiConfig.tenantID = 1;
+        config.tenantID = 1;
     }
 
-    healthCheck.updateAPIConfig(apiConfig)
+    healthCheck.updateConfig(config)
         .then(function (resp: Object) {
-            res.json(apiConfig);
+            res.json(config);
         })
         .catch(function (err: Object) {
             console.error(err);
@@ -132,7 +133,7 @@ router.put('/v1/HealthCheckManagement/:id', urlEncodedParser, function (req, res
 
 
 router.get('/v1/HealthCheckDetails', function (req, res) {
-    healthCheck.getAPIStatusDetailsByTenantID(1)
+    healthCheck.getStatusDetailsByTenantID(1)
         .then(function (resp) {
             res.json(resp);
         })
@@ -143,40 +144,43 @@ router.get('/v1/HealthCheckDetails', function (req, res) {
 
 router.post('/v1/HealthCheckDetails/', urlEncodedParser, function (req, res) {
 
-    let apiStatusDetail: APIStatusDetail = new APIStatusDetail;
+    let statusDetail: StatusDetail = new StatusDetail;
 
-    //newAPIStatusDetail.dataID = req.body..DTADataID;
-    apiStatusDetail.configID = Number(req.body.configID);
-    apiStatusDetail.dateTime = new Date(req.body.dateTime);
-    apiStatusDetail.pingResponseMS = Number(req.body.pingResponseMS);
-    switch (req.body.apiStatus.toString().toLowerCase()) {
-        case 'up':
-            apiStatusDetail.apiStatus = APIStatus.Up;
-            break;
-        case '1':
-            apiStatusDetail.apiStatus = APIStatus.Up;
-            break;
-        case 'down':
-            apiStatusDetail.apiStatus = APIStatus.Down;
-            break;
-        case '2':
-            apiStatusDetail.apiStatus = APIStatus.Down;
-            break;
-        case 'degraded':
-            apiStatusDetail.apiStatus = APIStatus.Degraded;
-            break;
-        case '3':
-            apiStatusDetail.apiStatus = APIStatus.Degraded;
-            break;
-        default:
-            apiStatusDetail.apiStatus = APIStatus.Unknown;
-            break;
+    statusDetail.configID = Number(req.body.configID);
+    statusDetail.dateTime = new Date(req.body.dateTime);
+    statusDetail.pingResponseMS = Number(req.body.pingResponseMS);
+    if (!req.body.status) {
+        statusDetail.status = StatusEnum.Unknown;
+    } else {
+        switch (req.body.status.toString().toLowerCase()) {
+            case 'up':
+                statusDetail.status = StatusEnum.Up;
+                break;
+            case '1':
+                statusDetail.status = StatusEnum.Up;
+                break;
+            case 'down':
+                statusDetail.status = StatusEnum.Down;
+                break;
+            case '2':
+                statusDetail.status = StatusEnum.Down;
+                break;
+            case 'degraded':
+                statusDetail.status = StatusEnum.Degraded;
+                break;
+            case '3':
+                statusDetail.status = StatusEnum.Degraded;
+                break;
+            default:
+                statusDetail.status = StatusEnum.Unknown;
+                break;
+        }
     }
 
-    healthCheck.addAPIData(apiStatusDetail)
+    healthCheck.addStatusDetail(statusDetail)
         .then(function (resp: number) {
-            apiStatusDetail.dataID = resp;
-            res.json(apiStatusDetail);
+            statusDetail.dataID = resp;
+            res.json(statusDetail);
         })
         .catch(function (err: Object) {
             console.error(err);
@@ -184,6 +188,69 @@ router.post('/v1/HealthCheckDetails/', urlEncodedParser, function (req, res) {
         });
 
 });
+
+
+
+router.get('/v1/HealthCheckSummary', function (req, res) {
+    healthCheck.getStatusSummaryByTenantID(1)
+        .then(function (resp) {
+            res.json(resp);
+        })
+        .catch(function (err) {
+            res.json(err);
+        });
+});
+
+router.post('/v1/HealthCheckSummary/', urlEncodedParser, function (req, res) {
+
+    let statusSummaryDaily: StatusSummaryDaily = new StatusSummaryDaily;
+
+    statusSummaryDaily.configID = Number(req.body.configID);
+    statusSummaryDaily.date = new Date(req.body.date);
+    statusSummaryDaily.averagePingResponseMS = Number(req.body.averagePingResponseMS);
+    statusSummaryDaily.uptimePercent = Number(req.body.uptimePercent);
+    if (!req.body.status) {
+        statusSummaryDaily.status = StatusEnum.Unknown;
+    } else {
+        switch (req.body.status.toString().toLowerCase()) {
+            case 'up':
+                statusSummaryDaily.status = StatusEnum.Up;
+                break;
+            case '1':
+                statusSummaryDaily.status = StatusEnum.Up;
+                break;
+            case 'down':
+                statusSummaryDaily.status = StatusEnum.Down;
+                break;
+            case '2':
+                statusSummaryDaily.status = StatusEnum.Down;
+                break;
+            case 'degraded':
+                statusSummaryDaily.status = StatusEnum.Degraded;
+                break;
+            case '3':
+                statusSummaryDaily.status = StatusEnum.Degraded;
+                break;
+            default:
+                statusSummaryDaily.status = StatusEnum.Unknown;
+                break;
+        }
+    }
+
+    healthCheck.addStatusSummary(statusSummaryDaily)
+        .then(function (resp: number) {
+            statusSummaryDaily.summaryID = resp;
+            res.json(statusSummaryDaily);
+        })
+        .catch(function (err: Object) {
+            console.error(err);
+            res.json(err);
+        });
+
+});
+
+
+
 
 app.get('/', function (req, res) {
     res.send('Hello World!')

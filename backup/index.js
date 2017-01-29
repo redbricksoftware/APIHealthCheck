@@ -3,8 +3,13 @@
 const port = process.env.PORT || 3000;
 const deploymentType = process.env.NODE_ENV || 'development';
 
-const auth0Secret = process.env.auth0Secret || 'divFe_KYHqJ9DH0fd3jxPkECnpTYPVHtRLJoRi2YIGQenkoVPjDM05-OQYS3BOyL';
-const auth0ClientId = process.env.auth0Secret || 'ENjNl28vprnZws3EAlNRKD7APNsJTD2J';
+
+
+const acctDetails = require('../acctDetails.json');
+const auth0Secret = process.env.auth0Secret || acctDetails.auth0Secret;
+const auth0ClientId = process.env.auth0Secret || acctDetails.auth0ClientID;
+
+
 
 //Express server
 const express = require('express');

@@ -1,6 +1,6 @@
 export class Tenant {
-    TenantID: number;
-    Name: string;
-    Code: string;
-    PrimaryUserID: number;
+    tenantID: number;
+    name: string;
+    code: string;
+    primaryUserID: number;
 }

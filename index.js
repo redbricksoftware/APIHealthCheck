@@ -117,6 +117,16 @@ router.get('/v1/HealthCheckDetails', function (req, res) {
         res.json(err);
     });
 });
+router.get('/v1/HealthCheckDetails/:id', function (req, res) {
+    var configID = Number(req.params.id);
+    healthCheck.getStatusDetailsByID(configID)
+        .then(function (resp) {
+        res.json(resp);
+    })
+        .catch(function (err) {
+        res.json(err);
+    });
+});
 router.post('/v1/HealthCheckDetails', function (req, res) {
     var statusDetail = new StatusDetail_1.StatusDetail;
     statusDetail.configID = Number(req.body.configID);

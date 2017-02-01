@@ -144,6 +144,20 @@ router.get('/v1/HealthCheckDetails', function (req, res) {
         });
 });
 
+
+
+router.get('/v1/HealthCheckDetails/:id', function (req, res) {
+    let configID = Number(req.params.id);
+
+    healthCheck.getStatusDetailsByID(configID)
+        .then(function (resp) {
+            res.json(resp);
+        })
+        .catch(function (err) {
+            res.json(err);
+        });
+});
+
 router.post('/v1/HealthCheckDetails', function (req, res) {
 
     let statusDetail: StatusDetail = new StatusDetail;

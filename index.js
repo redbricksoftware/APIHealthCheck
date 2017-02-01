@@ -12,28 +12,34 @@ var port = process.env.PORT || 3000;
 var deploymentType = process.env.NODE_ENV || 'development';
 var app = express();
 var router = express.Router();
-app.use('/api', router);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ type: "application/json" }));
 app.use(function (req, res, next) {
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
+    //allow origin.
+    if (req.headers.origin) {
+        var origin = req.headers.origin;
+        if (origin.indexOf('localhost') > 0) {
+            res.setHeader('Access-Control-Allow-Origin', origin);
+        }
+        // Request methods you wish to allow
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+        // Request headers you wish to allow
+        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+        // Set to true if you need the website to include cookies in the requests sent
+        // to the API (e.g. in case you use sessions)
+        res.setHeader('Access-Control-Allow-Credentials', true);
+    }
     // Pass to next layer of middleware
     next();
 });
+app.use('/api', router);
 //TODO: Add some auth
-// create application/x-www-form-urlencoded parser
-var urlEncodedParser = bodyParser.urlencoded({ extended: false });
 router.get('/v1/HealthCheckManagement', function (req, res) {
-    healthCheck.getConfigAll()
+    healthCheck.getConfigByTenantID(1)
         .then(function (resp) {
+        //console.log(resp);
         res.json(resp);
     })
         .catch(function (err) {
@@ -53,10 +59,10 @@ router.get('/v1/HealthCheckManagement/:id', function (req, res) {
 });
 //TODO: post add new health checks
 //Include urlEncodedParser to read req.body and parse to json.
-router.post('/v1/HealthCheckManagement', urlEncodedParser, function (req, res) {
+router.post('/v1/HealthCheckManagement', function (req, res) {
     var config = new Config_1.Config;
     if ((!util_1.isNullOrUndefined(req.body.name) && req.body.name.toString().trim() != '') && (!util_1.isNullOrUndefined(req.body.uri) && req.body.uri.toString().trim() != '')) {
-        config.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
+        config.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true' || req.body.enabled === true);
         config.maxResponseTimeMS = util_1.isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS;
         config.pollFrequencyInSeconds = util_1.isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds;
         config.name = req.body.name;
@@ -74,12 +80,10 @@ router.post('/v1/HealthCheckManagement', urlEncodedParser, function (req, res) {
     });
 });
 //TODO: put update health check by id
-router.put('/v1/HealthCheckManagement/:id', urlEncodedParser, function (req, res) {
-    console.log(req.body);
-    console.log(req.params.id);
+router.put('/v1/HealthCheckManagement/:id', function (req, res) {
     var config = new Config_1.Config;
     if ((!util_1.isNullOrUndefined(req.body.name) && req.body.name.toString().trim() != '') && (!util_1.isNullOrUndefined(req.body.uri) && req.body.uri.toString().trim() != '')) {
-        config.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true');
+        config.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true' || req.body.enabled === true);
         config.maxResponseTimeMS = Number(util_1.isNullOrUndefined(req.body.maxResponseTimeMS) ? 1000 : req.body.maxResponseTimeMS);
         config.pollFrequencyInSeconds = Number(util_1.isNullOrUndefined(req.body.pollFrequencyInSeconds) ? 15 * 60 : req.body.pollFrequencyInSeconds);
         config.name = req.body.name;
@@ -113,7 +117,7 @@ router.get('/v1/HealthCheckDetails', function (req, res) {
         res.json(err);
     });
 });
-router.post('/v1/HealthCheckDetails/', urlEncodedParser, function (req, res) {
+router.post('/v1/HealthCheckDetails/', function (req, res) {
     var statusDetail = new StatusDetail_1.StatusDetail;
     statusDetail.configID = Number(req.body.configID);
     statusDetail.dateTime = new Date(req.body.dateTime);
@@ -165,7 +169,7 @@ router.get('/v1/HealthCheckSummary', function (req, res) {
         res.json(err);
     });
 });
-router.post('/v1/HealthCheckSummary/', urlEncodedParser, function (req, res) {
+router.post('/v1/HealthCheckSummary/', function (req, res) {
     var statusSummaryDaily = new StatusSummaryDaily_1.StatusSummaryDaily;
     statusSummaryDaily.configID = Number(req.body.configID);
     statusSummaryDaily.date = new Date(req.body.date);

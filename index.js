@@ -117,7 +117,7 @@ router.get('/v1/HealthCheckDetails', function (req, res) {
         res.json(err);
     });
 });
-router.post('/v1/HealthCheckDetails/', function (req, res) {
+router.post('/v1/HealthCheckDetails', function (req, res) {
     var statusDetail = new StatusDetail_1.StatusDetail;
     statusDetail.configID = Number(req.body.configID);
     statusDetail.dateTime = new Date(req.body.dateTime);
@@ -160,7 +160,7 @@ router.post('/v1/HealthCheckDetails/', function (req, res) {
         res.json(err);
     });
 });
-router.get('/v1/HealthCheckSummary', function (req, res) {
+router.get('/v1/HealthCheckSummaryDaily/', function (req, res) {
     healthCheck.getStatusSummaryByTenantID(1)
         .then(function (resp) {
         res.json(resp);
@@ -169,9 +169,9 @@ router.get('/v1/HealthCheckSummary', function (req, res) {
         res.json(err);
     });
 });
-router.post('/v1/HealthCheckSummary/', function (req, res) {
+router.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
     var statusSummaryDaily = new StatusSummaryDaily_1.StatusSummaryDaily;
-    statusSummaryDaily.configID = Number(req.body.configID);
+    statusSummaryDaily.configID = Number(req.params.id);
     statusSummaryDaily.date = new Date(req.body.date);
     statusSummaryDaily.averagePingResponseMS = Number(req.body.averagePingResponseMS);
     statusSummaryDaily.uptimePercent = Number(req.body.uptimePercent);

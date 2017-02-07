@@ -114,7 +114,7 @@ var daHealthCheck = (function () {
                     reject(error);
                 }
                 else {
-                    var returnConfigs = [];
+                    var returnConfigs = new Array();
                     for (var i = 0; i < results.length; i++) {
                         returnConfigs.push(Config_1.Config.mapMySQLResultsToConfig(results[i]));
                     }

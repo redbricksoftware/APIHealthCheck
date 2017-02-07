@@ -101,13 +101,6 @@ router.put('/v1/HealthCheckManagement/:id', function (req, res) {
         res.json(err);
     });
 });
-/*
- //Delete not allowed
- router.delete('/v1/HealthCheckManagement/:id', function (req, res) {
- console.log('Delete Health Check: ' + req.params.id);
- res.json({'unfound': 'abc'});
- });
- */
 router.get('/v1/HealthCheckDetails', function (req, res) {
     healthCheck.getStatusDetailsByTenantID(1)
         .then(function (resp) {

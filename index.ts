@@ -125,15 +125,6 @@ router.put('/v1/HealthCheckManagement/:id', function (req, res) {
         });
 });
 
-/*
- //Delete not allowed
- router.delete('/v1/HealthCheckManagement/:id', function (req, res) {
- console.log('Delete Health Check: ' + req.params.id);
- res.json({'unfound': 'abc'});
- });
- */
-
-
 router.get('/v1/HealthCheckDetails', function (req, res) {
     healthCheck.getStatusDetailsByTenantID(1)
         .then(function (resp) {
@@ -143,8 +134,6 @@ router.get('/v1/HealthCheckDetails', function (req, res) {
             res.json(err);
         });
 });
-
-
 
 router.get('/v1/HealthCheckDetails/:id', function (req, res) {
     let configID = Number(req.params.id);
@@ -205,7 +194,6 @@ router.post('/v1/HealthCheckDetails', function (req, res) {
 
 });
 
-
 router.get('/v1/HealthCheckSummaryDaily/', function (req, res) {
     healthCheck.getStatusSummaryByTenantID(1)
         .then(function (resp) {
@@ -264,13 +252,13 @@ router.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
 
 });
 
-
 app.get('/', function (req, res) {
     res.send('Hello World!')
 });
-
 
 app.listen(port);
 console.log('Magic happens on port ' + port);
 
 export = app;
+
+

@@ -127,7 +127,7 @@ export class daHealthCheck {
         });
     };
 
-    getConfigAll() {
+    getConfigAll(): Promise<Config[]> {
         return new Promise(function (resolve, reject) {
 
             let query = 'SELECT * FROM Configs';
@@ -137,7 +137,7 @@ export class daHealthCheck {
                     if (error) {
                         reject(error);
                     } else {
-                        let returnConfigs = [];
+                        let returnConfigs: Config[] = new Array<Config>();
                         for (let i = 0; i < results.length; i++) {
                             returnConfigs.push(Config.mapMySQLResultsToConfig(results[i]));
                         }

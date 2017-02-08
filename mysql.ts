@@ -62,7 +62,8 @@ export class daHealthCheck {
     getTenantByID(tenantID: number): Promise<Tenant> {
         return new Promise(function (resolve, reject) {
 
-            let query = 'SELECT * FROM Tenants ';
+            let query = 'SELECT TNTTenantID, TNTName, TNTCode, TNTPrimaryUserID ';
+            query += 'FROM Tenants ';
             query += 'WHERE TNTTenantID = ?';
 
             pool.query(query,
@@ -130,7 +131,10 @@ export class daHealthCheck {
     getConfigAll(): Promise<Config[]> {
         return new Promise(function (resolve, reject) {
 
-            let query = 'SELECT * FROM Configs';
+            let query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
+            query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
+            query += 'CFGEmergencyContactGroupID ';
+            query += 'FROM Configs ';
 
             pool.query(query,
                 function (error, results, fields) {
@@ -139,7 +143,7 @@ export class daHealthCheck {
                     } else {
                         let returnConfigs: Config[] = new Array<Config>();
                         for (let i = 0; i < results.length; i++) {
-                            returnConfigs.push(Config.mapMySQLResultsToConfig(results[i]));
+                            returnConfigs.push(daHealthCheck.mapMySQLResultsToConfig(results[i]));
                         }
                         resolve(returnConfigs);
                     }
@@ -149,7 +153,11 @@ export class daHealthCheck {
 
     getConfigByTenantID(tenantID: number): Promise <Config[]> {
 
-        let query = 'SELECT * FROM Configs WHERE CFGTenantID = ?';
+        let query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
+        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
+        query += 'CFGEmergencyContactGroupID ';
+        query += 'FROM Configs ';
+        query += 'WHERE CFGTenantID = ?';
 
         return new Promise(function (resolve, reject) {
             pool.query(query,
@@ -160,7 +168,7 @@ export class daHealthCheck {
                     } else {
                         let returnConfigs = [];
                         for (let i = 0; i < results.length; i++) {
-                            returnConfigs.push(Config.mapMySQLResultsToConfig(results[i]));
+                            returnConfigs.push(daHealthCheck.mapMySQLResultsToConfig(results[i]));
                         }
                         resolve(returnConfigs);
                     }
@@ -171,7 +179,11 @@ export class daHealthCheck {
 
     getConfigByName(tenantID: number, name: string): Promise <Config[]> {
 
-        let query = 'SELECT * FROM Configs WHERE CFGTenantID = ? AND CFGName LIKE ?';
+        let query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
+        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
+        query += 'CFGEmergencyContactGroupID ';
+        query += 'FROM Configs ';
+        query += 'WHERE CFGTenantID = ? AND CFGName LIKE ?';
 
         return new Promise(function (resolve, reject) {
             pool.query(query,
@@ -183,7 +195,7 @@ export class daHealthCheck {
                     } else {
                         let returnConfigs = [];
                         for (let i = 0; i < results.length; i++) {
-                            returnConfigs.push(Config.mapMySQLResultsToConfig(results[i]));
+                            returnConfigs.push(daHealthCheck.mapMySQLResultsToConfig(results[i]));
                         }
                         resolve(returnConfigs);
                     }
@@ -194,7 +206,11 @@ export class daHealthCheck {
 
     getConfigByID(tenantID: number, config: number): Promise <Config> {
 
-        let query = 'SELECT * FROM Configs WHERE CFGTenantID = ? AND CFGConfigID LIKE ?';
+        let query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
+        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
+        query += 'CFGEmergencyContactGroupID ';
+        query += 'FROM Configs ';
+        query += 'WHERE CFGTenantID = ? AND CFGConfigID LIKE ?';
 
         return new Promise(function (resolve, reject) {
             pool.query(query,
@@ -203,7 +219,7 @@ export class daHealthCheck {
                     if (error) {
                         reject(error);
                     } else {
-                        resolve(Config.mapMySQLResultsToConfig(results[0]));
+                        resolve(daHealthCheck.mapMySQLResultsToConfig(results[0]));
                     }
                 });
         });
@@ -238,7 +254,9 @@ export class daHealthCheck {
 
         return new Promise(function (resolve, reject) {
 
-            let query = 'SELECT StatusDetails.* FROM StatusDetails ';
+            let query = 'SELECT DTADataID, DTAConfigID, DTADateTime, DTAPingResponseMS, ';
+            query += 'DTAStatus ';
+            query += 'FROM StatusDetails ';
             query += 'JOIN Configs ON StatusDetails.DTAConfigID = Configs.CFGConfigID ';
             query += 'WHERE Configs.CFGTenantID = ?';
 
@@ -250,7 +268,7 @@ export class daHealthCheck {
                     } else {
                         let returnStatusDetails = [];
                         for (let i = 0; i < results.length; i++) {
-                            returnStatusDetails.push(StatusDetail.mapMySQLResultsToStatusDetail(results[i]));
+                            returnStatusDetails.push(daHealthCheck.mapMySQLResultsToStatusDetail(results[i]));
                         }
                         resolve(returnStatusDetails);
                     }
@@ -262,7 +280,10 @@ export class daHealthCheck {
 
         return new Promise(function (resolve, reject) {
 
-            let query = 'SELECT * FROM StatusDetails WHERE DTAConfigID = ?';
+            let query = 'SELECT DTADataID, DTAConfigID, DTADateTime, DTAPingResponseMS, ';
+            query += 'DTAStatus ';
+            query += 'FROM StatusDetails ';
+            query += 'WHERE DTAConfigID = ?';
 
             pool.query(query,
                 [configID],
@@ -272,7 +293,7 @@ export class daHealthCheck {
                     } else {
                         let returnStatusDetails = [];
                         for (let i = 0; i < results.length; i++) {
-                            returnStatusDetails.push(StatusDetail.mapMySQLResultsToStatusDetail(results[i]));
+                            returnStatusDetails.push(daHealthCheck.mapMySQLResultsToStatusDetail(results[i]));
                         }
                         resolve(returnStatusDetails);
                     }
@@ -315,7 +336,8 @@ export class daHealthCheck {
     getStatusSummaryByTenantID(tenantID: number): Promise<StatusSummaryDaily[]> {
         return new Promise(function (resolve, reject) {
 
-            let query = 'SELECT StatusSummaryDaily.* ';
+            let query = 'SELECT SSDStatusSummaryDailyID, SSDConfigID, SSDDate, SSDAveragePingResponseMS ';
+            query += 'SSDStatus, SSDUptimePercent ';
             query += 'FROM StatusSummaryDaily ';
             query += 'JOIN Configs ON StatusSummaryDaily.SSDConfigID = Configs.CFGConfigID ';
             query += 'WHERE CFGTenantID = ? ';
@@ -328,7 +350,7 @@ export class daHealthCheck {
                     } else {
                         let returnStatusSummaryDaily = [];
                         for (let i = 0; i < results.length; i++) {
-                            returnStatusSummaryDaily.push(StatusSummaryDaily.mapMySQLResultsToStatusSummaryDaily(results[i]));
+                            returnStatusSummaryDaily.push(daHealthCheck.mapMySQLResultsToStatusSummaryDaily(results[i]));
                         }
                         resolve(returnStatusSummaryDaily);
                     }
@@ -339,7 +361,10 @@ export class daHealthCheck {
     getStatusSummaryByConfigID(configID: number): Promise<StatusSummaryDaily[]> {
         return new Promise(function (resolve, reject) {
 
-            let query = 'SELECT * FROM StatusSummaryDaily WHERE SSDConfigID = ?';
+            let query = 'SELECT SSDStatusSummaryDailyID, SSDConfigID, SSDDate, SSDAveragePingResponseMS ';
+            query += 'SSDStatus, SSDUptimePercent ';
+            query += 'FROM StatusSummaryDaily ';
+            query += 'WHERE SSDConfigID = ?';
 
             pool.query(query,
                 [configID],
@@ -349,12 +374,64 @@ export class daHealthCheck {
                     } else {
                         let returnStatusSummaryDaily = [];
                         for (let i = 0; i < results.length; i++) {
-                            returnStatusSummaryDaily.push(StatusSummaryDaily.mapMySQLResultsToStatusSummaryDaily(results[i]));
+                            returnStatusSummaryDaily.push(daHealthCheck.mapMySQLResultsToStatusSummaryDaily(results[i]));
                         }
                         resolve(returnStatusSummaryDaily);
                     }
                 });
         });
     }
+
+    static mapMySQLResultsToConfig(val): Config {
+        let newConfig = new Config;
+        if (val) {
+            newConfig.configID = val.CFGConfigID;
+            newConfig.tenantID = val.CFGTenantID;
+            newConfig.name = val.CFGName;
+            newConfig.uri = val.CFGURI;
+            newConfig.enabled = (val.CFGEnabled === 'true' || val.CFGEnabled === 1 || val.CFGEnabled) ? true : false;
+            newConfig.pollFrequencyInSeconds = val.CFGPollFrequencyInSeconds;
+            newConfig.maxResponseTimeMS = val.CFGMaxResponseTimeMS;
+            newConfig.emergencyContactGroupID = val.CFGEmergencyContactGroupID;
+        } else {
+            return null;
+        }
+        return newConfig;
+    }
+
+
+    static mapMySQLResultsToStatusDetail(val): StatusDetail {
+        let newStatusDetail = new StatusDetail();
+        if (val) {
+            newStatusDetail.dataID = val.DTADataID;
+            newStatusDetail.configID = val.DTAConfigID;
+            newStatusDetail.dateTime = val.DTADateTime;
+            newStatusDetail.pingResponseMS = val.DTAPingResponseMS;
+            newStatusDetail.status = val.DTAStatus;
+
+        } else {
+            return null;
+        }
+        return newStatusDetail;
+    }
+
+
+    static mapMySQLResultsToStatusSummaryDaily(val): StatusSummaryDaily {
+
+        let newStatusSummaryDaily = new StatusSummaryDaily();
+        if (val) {
+            newStatusSummaryDaily.summaryID = Number(val.SSDStatusSummaryDailyID);
+            newStatusSummaryDaily.configID = Number(val.SSDConfigID);
+            newStatusSummaryDaily.date = val.SSDDate;
+            newStatusSummaryDaily.averagePingResponseMS = val.SSDAveragePingResponseMS;
+            newStatusSummaryDaily.status = val.SSDStatus;
+            newStatusSummaryDaily.uptimePercent = val.SSDUptimePercent;
+        } else {
+            return null;
+        }
+
+        return newStatusSummaryDaily;
+    }
+
 
 }

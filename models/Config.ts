@@ -16,23 +16,6 @@ export class Config {
     maxResponseTimeMS: number;
     emergencyContactGroupID: number;
 
-    static mapMySQLResultsToConfig(val): Config {
-        let newConfig = new Config;
-        if (val) {
-            newConfig.configID = val.CFGConfigID;
-            newConfig.tenantID = val.CFGTenantID;
-            newConfig.name = val.CFGName;
-            newConfig.uri = val.CFGURI;
-            newConfig.enabled = (val.CFGEnabled === 'true' || val.CFGEnabled === 1 || val.CFGEnabled) ? true : false;
-            newConfig.pollFrequencyInSeconds = val.CFGPollFrequencyInSeconds;
-            newConfig.maxResponseTimeMS = val.CFGMaxResponseTimeMS;
-            newConfig.emergencyContactGroupID = val.CFGEmergencyContactGroupID;
-        } else {
-            return null;
-        }
-        return newConfig;
-    }
-
     validate(): Promise<Error[]> {
         let me = this;
         return new Promise(function (resolve, reject) {

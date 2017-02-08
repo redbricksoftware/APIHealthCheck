@@ -6,20 +6,6 @@ var util_3 = require("util");
 var StatusDetail = (function () {
     function StatusDetail() {
     }
-    StatusDetail.mapMySQLResultsToStatusDetail = function (val) {
-        var newStatusDetail = new StatusDetail();
-        if (val) {
-            newStatusDetail.dataID = val.DTADataID;
-            newStatusDetail.configID = val.DTAConfigID;
-            newStatusDetail.dateTime = val.DTADateTime;
-            newStatusDetail.pingResponseMS = val.DTAPingResponseMS;
-            newStatusDetail.status = val.DTAStatus;
-        }
-        else {
-            return null;
-        }
-        return newStatusDetail;
-    };
     StatusDetail.prototype.validate = function () {
         var me = this;
         return new Promise(function (resolve, reject) {

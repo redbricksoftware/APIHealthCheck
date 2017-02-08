@@ -11,21 +11,6 @@ export class StatusDetail {
     pingResponseMS: number;
     status: StatusEnum;
 
-    static mapMySQLResultsToStatusDetail(val): StatusDetail {
-        let newStatusDetail = new StatusDetail();
-        if (val) {
-            newStatusDetail.dataID = val.DTADataID;
-            newStatusDetail.configID = val.DTAConfigID;
-            newStatusDetail.dateTime = val.DTADateTime;
-            newStatusDetail.pingResponseMS = val.DTAPingResponseMS;
-            newStatusDetail.status = val.DTAStatus;
-
-        } else {
-            return null;
-        }
-        return newStatusDetail;
-    }
-
     validate(): Promise<Error[]> {
         let me = this;
         return new Promise(function (resolve, reject) {

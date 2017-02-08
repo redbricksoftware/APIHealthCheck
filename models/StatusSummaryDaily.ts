@@ -13,24 +13,6 @@ export class StatusSummaryDaily {
     uptimePercent: number;
 
 
-    static mapMySQLResultsToStatusSummaryDaily(val): StatusSummaryDaily {
-
-        let newStatusSummaryDaily = new StatusSummaryDaily();
-        if (val) {
-            newStatusSummaryDaily.summaryID = Number(val.SSDStatusSummaryDailyID);
-            newStatusSummaryDaily.configID = Number(val.SSDConfigID);
-            newStatusSummaryDaily.date = val.SSDDate;
-            newStatusSummaryDaily.averagePingResponseMS = val.SSDAveragePingResponseMS;
-            newStatusSummaryDaily.status = val.SSDStatus;
-            newStatusSummaryDaily.uptimePercent = val.SSDUptimePercent;
-        } else {
-            return null;
-        }
-
-        return newStatusSummaryDaily;
-    }
-
-
     validate(): Promise<Error[]> {
         let me = this;
         return new Promise(function (resolve, reject) {

@@ -6,21 +6,6 @@ var util_3 = require("util");
 var StatusSummaryDaily = (function () {
     function StatusSummaryDaily() {
     }
-    StatusSummaryDaily.mapMySQLResultsToStatusSummaryDaily = function (val) {
-        var newStatusSummaryDaily = new StatusSummaryDaily();
-        if (val) {
-            newStatusSummaryDaily.summaryID = Number(val.SSDStatusSummaryDailyID);
-            newStatusSummaryDaily.configID = Number(val.SSDConfigID);
-            newStatusSummaryDaily.date = val.SSDDate;
-            newStatusSummaryDaily.averagePingResponseMS = val.SSDAveragePingResponseMS;
-            newStatusSummaryDaily.status = val.SSDStatus;
-            newStatusSummaryDaily.uptimePercent = val.SSDUptimePercent;
-        }
-        else {
-            return null;
-        }
-        return newStatusSummaryDaily;
-    };
     StatusSummaryDaily.prototype.validate = function () {
         var me = this;
         return new Promise(function (resolve, reject) {

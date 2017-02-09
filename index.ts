@@ -9,12 +9,24 @@ import {StatusDetail} from "./models/StatusDetail";
 import {StatusEnum} from './models/StatusEnum';
 import {StatusSummaryDaily} from "./models/StatusSummaryDaily";
 
+
+import * as jwt from "express-jwt";
+
+const acctDetails = require('./acctDetails.json');
+
+const jwtCheck = jwt({
+    secret:  acctDetails.auth0Secret,
+    audience: acctDetails.auth0ClientID
+});
+
+
 const healthCheck = new daHealthCheck();
 
 const port = process.env.PORT || 3000;
 const deploymentType = process.env.NODE_ENV || 'development';
 
 const app = express();
+const router2 = express.Router();
 const router = express.Router();
 app.use(bodyParser.json({type: "application/json"}));
 
@@ -44,8 +56,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use('/api', router);
-
 //TODO: Add some auth
 
 router.get('/v1/HealthCheckManagement', function (req, res) {
@@ -55,6 +65,7 @@ router.get('/v1/HealthCheckManagement', function (req, res) {
             res.json(resp);
         })
         .catch(function (err) {
+            console.log(err);
             res.json(err);
         });
 });
@@ -252,9 +263,26 @@ router.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
 
 });
 
+router2.get('/v1/HealthCheckDetails', function (req, res) {
+    healthCheck.getStatusDetailsByTenantID(1)
+        .then(function (resp) {
+            res.json(resp);
+        })
+        .catch(function (err) {
+            res.json(err);
+        });
+});
+
+
+app.use('/api', jwtCheck);
+app.use('/api', router);
+app.use('/public', router2);
+
+/*
 app.get('/', function (req, res) {
     res.send('Hello World!')
 });
+*/
 
 app.listen(port);
 console.log('Magic happens on port ' + port);

@@ -132,8 +132,8 @@ export class daHealthCheck {
         return new Promise(function (resolve, reject) {
 
             let query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
-            query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
-            query += 'CFGEmergencyContactGroupID ';
+            query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS ';
+            //query += ', CFGEmergencyContactGroupID ';
             query += 'FROM Configs ';
 
             pool.query(query,
@@ -154,8 +154,8 @@ export class daHealthCheck {
     getConfigByTenantID(tenantID: number): Promise <Config[]> {
 
         let query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
-        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
-        query += 'CFGEmergencyContactGroupID ';
+        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS ';
+        //query += ', CFGEmergencyContactGroupID ';
         query += 'FROM Configs ';
         query += 'WHERE CFGTenantID = ?';
 
@@ -180,8 +180,8 @@ export class daHealthCheck {
     getConfigByName(tenantID: number, name: string): Promise <Config[]> {
 
         let query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
-        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
-        query += 'CFGEmergencyContactGroupID ';
+        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS ';
+        //query += ', CFGEmergencyContactGroupID ';
         query += 'FROM Configs ';
         query += 'WHERE CFGTenantID = ? AND CFGName LIKE ?';
 
@@ -207,8 +207,8 @@ export class daHealthCheck {
     getConfigByID(tenantID: number, config: number): Promise <Config> {
 
         let query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
-        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
-        query += 'CFGEmergencyContactGroupID ';
+        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS ';
+        //query += ', CFGEmergencyContactGroupID ';
         query += 'FROM Configs ';
         query += 'WHERE CFGTenantID = ? AND CFGConfigID LIKE ?';
 

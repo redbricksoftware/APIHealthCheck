@@ -7,10 +7,17 @@ var util_1 = require("util");
 var StatusDetail_1 = require("./models/StatusDetail");
 var StatusEnum_1 = require('./models/StatusEnum');
 var StatusSummaryDaily_1 = require("./models/StatusSummaryDaily");
+var jwt = require("express-jwt");
+var acctDetails = require('./acctDetails.json');
+var jwtCheck = jwt({
+    secret: acctDetails.auth0Secret,
+    audience: acctDetails.auth0ClientID
+});
 var healthCheck = new mysql_1.daHealthCheck();
 var port = process.env.PORT || 3000;
 var deploymentType = process.env.NODE_ENV || 'development';
 var app = express();
+var router2 = express.Router();
 var router = express.Router();
 app.use(bodyParser.json({ type: "application/json" }));
 app.use(function (req, res, next) {
@@ -34,7 +41,6 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
-app.use('/api', router);
 //TODO: Add some auth
 router.get('/v1/HealthCheckManagement', function (req, res) {
     healthCheck.getConfigByTenantID(1)
@@ -43,6 +49,7 @@ router.get('/v1/HealthCheckManagement', function (req, res) {
         res.json(resp);
     })
         .catch(function (err) {
+        console.log(err);
         res.json(err);
     });
 });
@@ -216,9 +223,23 @@ router.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
         res.json(err);
     });
 });
-app.get('/', function (req, res) {
-    res.send('Hello World!');
+router2.get('/v1/HealthCheckDetails', function (req, res) {
+    healthCheck.getStatusDetailsByTenantID(1)
+        .then(function (resp) {
+        res.json(resp);
+    })
+        .catch(function (err) {
+        res.json(err);
+    });
 });
+app.use('/api', jwtCheck);
+app.use('/api', router);
+app.use('/public', router2);
+/*
+app.get('/', function (req, res) {
+    res.send('Hello World!')
+});
+*/
 app.listen(port);
 console.log('Magic happens on port ' + port);
 module.exports = app;

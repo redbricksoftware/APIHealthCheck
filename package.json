@@ -37,7 +37,9 @@
     "es6-promise": "4.*",
     "@types/es6-promise": "*",
     "cron": "1.*",
-    "@types/cron": "*"
+    "@types/cron": "*",
+    "express-jwt": "*",
+    "@types/express-jwt": "*"
   },
   "devDependencies": {
     "mocha": "~3.*",

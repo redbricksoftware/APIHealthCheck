@@ -106,7 +106,6 @@ function addDynamicFunction(id, name, interval, uri) {
     }, secondsToMS(interval));
 }
 
-
 function secondsToMS(seconds) {
     return seconds * 1000;
 }
@@ -183,8 +182,6 @@ function respCallback(id, res, normalizeFunction, start, end) {
         });
 }
 
-
-
 //Update Summaries!
 let job = new CronJob({
     cronTime: '* * 1 * * 1-5',
@@ -204,3 +201,5 @@ let job = new CronJob({
     timeZone: 'UTC'
 });
 job.start();
+
+

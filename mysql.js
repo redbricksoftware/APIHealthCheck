@@ -110,8 +110,8 @@ var daHealthCheck = (function () {
     daHealthCheck.prototype.getConfigAll = function () {
         return new es6_promise_1.Promise(function (resolve, reject) {
             var query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
-            query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
-            query += 'CFGEmergencyContactGroupID ';
+            query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS ';
+            //query += ', CFGEmergencyContactGroupID ';
             query += 'FROM Configs ';
             pool.query(query, function (error, results, fields) {
                 if (error) {
@@ -130,8 +130,8 @@ var daHealthCheck = (function () {
     ;
     daHealthCheck.prototype.getConfigByTenantID = function (tenantID) {
         var query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
-        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
-        query += 'CFGEmergencyContactGroupID ';
+        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS ';
+        //query += ', CFGEmergencyContactGroupID ';
         query += 'FROM Configs ';
         query += 'WHERE CFGTenantID = ?';
         return new es6_promise_1.Promise(function (resolve, reject) {
@@ -152,8 +152,8 @@ var daHealthCheck = (function () {
     ;
     daHealthCheck.prototype.getConfigByName = function (tenantID, name) {
         var query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
-        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
-        query += 'CFGEmergencyContactGroupID ';
+        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS ';
+        //query += ', CFGEmergencyContactGroupID ';
         query += 'FROM Configs ';
         query += 'WHERE CFGTenantID = ? AND CFGName LIKE ?';
         return new es6_promise_1.Promise(function (resolve, reject) {
@@ -175,8 +175,8 @@ var daHealthCheck = (function () {
     ;
     daHealthCheck.prototype.getConfigByID = function (tenantID, config) {
         var query = 'SELECT CFGConfigID, CFGTenantID, CFGName, CFGURI, ';
-        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS, ';
-        query += 'CFGEmergencyContactGroupID ';
+        query += 'CFGEnabled, CFGPollFrequencyInSeconds, CFGMaxResponseTimeMS ';
+        //query += ', CFGEmergencyContactGroupID ';
         query += 'FROM Configs ';
         query += 'WHERE CFGTenantID = ? AND CFGConfigID LIKE ?';
         return new es6_promise_1.Promise(function (resolve, reject) {

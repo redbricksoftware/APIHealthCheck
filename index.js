@@ -17,8 +17,8 @@ var healthCheck = new mysql_1.daHealthCheck();
 var port = process.env.PORT || 3000;
 var deploymentType = process.env.NODE_ENV || 'development';
 var app = express();
-var router2 = express.Router();
-var router = express.Router();
+var publicRouter = express.Router();
+var authRouter = express.Router();
 app.use(bodyParser.json({ type: "application/json" }));
 app.use(function (req, res, next) {
     // Website you wish to allow to connect
@@ -42,7 +42,7 @@ app.use(function (req, res, next) {
     next();
 });
 //TODO: Add some auth
-router.get('/v1/HealthCheckManagement', function (req, res) {
+authRouter.get('/v1/HealthCheckManagement', function (req, res) {
     healthCheck.getConfigByTenantID(1)
         .then(function (resp) {
         //console.log(resp);
@@ -53,7 +53,7 @@ router.get('/v1/HealthCheckManagement', function (req, res) {
         res.json(err);
     });
 });
-router.get('/v1/HealthCheckManagement/:id', function (req, res) {
+authRouter.get('/v1/HealthCheckManagement/:id', function (req, res) {
     //console.log('Get Specific Health Check: ' + req.params.id);
     //TODO: implement token and get tenant id from token.
     healthCheck.getConfigByID(1, req.params.id)
@@ -66,7 +66,7 @@ router.get('/v1/HealthCheckManagement/:id', function (req, res) {
 });
 //TODO: post add new health checks
 //Include urlEncodedParser to read req.body and parse to json.
-router.post('/v1/HealthCheckManagement', function (req, res) {
+authRouter.post('/v1/HealthCheckManagement', function (req, res) {
     var config = new Config_1.Config;
     if ((!util_1.isNullOrUndefined(req.body.name) && req.body.name.toString().trim() != '') && (!util_1.isNullOrUndefined(req.body.uri) && req.body.uri.toString().trim() != '')) {
         config.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true' || req.body.enabled === true);
@@ -87,7 +87,7 @@ router.post('/v1/HealthCheckManagement', function (req, res) {
     });
 });
 //TODO: put update health check by id
-router.put('/v1/HealthCheckManagement/:id', function (req, res) {
+authRouter.put('/v1/HealthCheckManagement/:id', function (req, res) {
     var config = new Config_1.Config;
     if ((!util_1.isNullOrUndefined(req.body.name) && req.body.name.toString().trim() != '') && (!util_1.isNullOrUndefined(req.body.uri) && req.body.uri.toString().trim() != '')) {
         config.enabled = util_1.isNullOrUndefined(req.body.enabled) ? true : (req.body.enabled === 'true' || req.body.enabled === true);
@@ -108,7 +108,7 @@ router.put('/v1/HealthCheckManagement/:id', function (req, res) {
         res.json(err);
     });
 });
-router.get('/v1/HealthCheckDetails', function (req, res) {
+authRouter.get('/v1/HealthCheckDetails', function (req, res) {
     healthCheck.getStatusDetailsByTenantID(1)
         .then(function (resp) {
         res.json(resp);
@@ -117,7 +117,7 @@ router.get('/v1/HealthCheckDetails', function (req, res) {
         res.json(err);
     });
 });
-router.get('/v1/HealthCheckDetails/:id', function (req, res) {
+authRouter.get('/v1/HealthCheckDetails/:id', function (req, res) {
     var configID = Number(req.params.id);
     healthCheck.getStatusDetailsByID(configID)
         .then(function (resp) {
@@ -127,7 +127,7 @@ router.get('/v1/HealthCheckDetails/:id', function (req, res) {
         res.json(err);
     });
 });
-router.post('/v1/HealthCheckDetails', function (req, res) {
+authRouter.post('/v1/HealthCheckDetails', function (req, res) {
     var statusDetail = new StatusDetail_1.StatusDetail;
     statusDetail.configID = Number(req.body.configID);
     statusDetail.dateTime = new Date(req.body.dateTime);
@@ -170,7 +170,7 @@ router.post('/v1/HealthCheckDetails', function (req, res) {
         res.json(err);
     });
 });
-router.get('/v1/HealthCheckSummaryDaily/', function (req, res) {
+authRouter.get('/v1/HealthCheckSummaryDaily/', function (req, res) {
     healthCheck.getStatusSummaryByTenantID(1)
         .then(function (resp) {
         res.json(resp);
@@ -179,7 +179,7 @@ router.get('/v1/HealthCheckSummaryDaily/', function (req, res) {
         res.json(err);
     });
 });
-router.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
+authRouter.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
     var statusSummaryDaily = new StatusSummaryDaily_1.StatusSummaryDaily;
     statusSummaryDaily.configID = Number(req.params.id);
     statusSummaryDaily.date = new Date(req.body.date);
@@ -223,7 +223,7 @@ router.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
         res.json(err);
     });
 });
-router2.get('/v1/HealthCheckDetails', function (req, res) {
+publicRouter.get('/v1/HealthCheckDetails', function (req, res) {
     healthCheck.getStatusDetailsByTenantID(1)
         .then(function (resp) {
         res.json(resp);
@@ -233,13 +233,13 @@ router2.get('/v1/HealthCheckDetails', function (req, res) {
     });
 });
 app.use('/api', jwtCheck);
-app.use('/api', router);
-app.use('/public', router2);
+app.use('/api', authRouter);
+app.use('/public', publicRouter);
 /*
-app.get('/', function (req, res) {
-    res.send('Hello World!')
-});
-*/
+ app.get('/', function (req, res) {
+ res.send('Hello World!')
+ });
+ */
 app.listen(port);
 console.log('Magic happens on port ' + port);
 module.exports = app;

@@ -15,7 +15,7 @@ import * as jwt from "express-jwt";
 const acctDetails = require('./acctDetails.json');
 
 const jwtCheck = jwt({
-    secret:  acctDetails.auth0Secret,
+    secret: acctDetails.auth0Secret,
     audience: acctDetails.auth0ClientID
 });
 
@@ -26,8 +26,8 @@ const port = process.env.PORT || 3000;
 const deploymentType = process.env.NODE_ENV || 'development';
 
 const app = express();
-const router2 = express.Router();
-const router = express.Router();
+const publicRouter = express.Router();
+const authRouter = express.Router();
 app.use(bodyParser.json({type: "application/json"}));
 
 app.use(function (req, res, next) {
@@ -58,7 +58,7 @@ app.use(function (req, res, next) {
 
 //TODO: Add some auth
 
-router.get('/v1/HealthCheckManagement', function (req, res) {
+authRouter.get('/v1/HealthCheckManagement', function (req, res) {
     healthCheck.getConfigByTenantID(1)
         .then(function (resp) {
             //console.log(resp);
@@ -70,7 +70,7 @@ router.get('/v1/HealthCheckManagement', function (req, res) {
         });
 });
 
-router.get('/v1/HealthCheckManagement/:id', function (req, res) {
+authRouter.get('/v1/HealthCheckManagement/:id', function (req, res) {
 
     //console.log('Get Specific Health Check: ' + req.params.id);
 
@@ -86,7 +86,7 @@ router.get('/v1/HealthCheckManagement/:id', function (req, res) {
 
 //TODO: post add new health checks
 //Include urlEncodedParser to read req.body and parse to json.
-router.post('/v1/HealthCheckManagement', function (req, res) {
+authRouter.post('/v1/HealthCheckManagement', function (req, res) {
 
     let config: Config = new Config;
 
@@ -111,7 +111,7 @@ router.post('/v1/HealthCheckManagement', function (req, res) {
 });
 
 //TODO: put update health check by id
-router.put('/v1/HealthCheckManagement/:id', function (req, res) {
+authRouter.put('/v1/HealthCheckManagement/:id', function (req, res) {
 
     let config: Config = new Config;
 
@@ -136,7 +136,7 @@ router.put('/v1/HealthCheckManagement/:id', function (req, res) {
         });
 });
 
-router.get('/v1/HealthCheckDetails', function (req, res) {
+authRouter.get('/v1/HealthCheckDetails', function (req, res) {
     healthCheck.getStatusDetailsByTenantID(1)
         .then(function (resp) {
             res.json(resp);
@@ -146,7 +146,7 @@ router.get('/v1/HealthCheckDetails', function (req, res) {
         });
 });
 
-router.get('/v1/HealthCheckDetails/:id', function (req, res) {
+authRouter.get('/v1/HealthCheckDetails/:id', function (req, res) {
     let configID = Number(req.params.id);
 
     healthCheck.getStatusDetailsByID(configID)
@@ -158,7 +158,7 @@ router.get('/v1/HealthCheckDetails/:id', function (req, res) {
         });
 });
 
-router.post('/v1/HealthCheckDetails', function (req, res) {
+authRouter.post('/v1/HealthCheckDetails', function (req, res) {
 
     let statusDetail: StatusDetail = new StatusDetail;
 
@@ -205,7 +205,7 @@ router.post('/v1/HealthCheckDetails', function (req, res) {
 
 });
 
-router.get('/v1/HealthCheckSummaryDaily/', function (req, res) {
+authRouter.get('/v1/HealthCheckSummaryDaily/', function (req, res) {
     healthCheck.getStatusSummaryByTenantID(1)
         .then(function (resp) {
             res.json(resp);
@@ -215,7 +215,7 @@ router.get('/v1/HealthCheckSummaryDaily/', function (req, res) {
         });
 });
 
-router.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
+authRouter.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
 
     let statusSummaryDaily: StatusSummaryDaily = new StatusSummaryDaily;
 
@@ -263,7 +263,7 @@ router.post('/v1/HealthCheckSummaryDaily/:id', function (req, res) {
 
 });
 
-router2.get('/v1/HealthCheckDetails', function (req, res) {
+publicRouter.get('/v1/HealthCheckDetails', function (req, res) {
     healthCheck.getStatusDetailsByTenantID(1)
         .then(function (resp) {
             res.json(resp);
@@ -275,14 +275,14 @@ router2.get('/v1/HealthCheckDetails', function (req, res) {
 
 
 app.use('/api', jwtCheck);
-app.use('/api', router);
-app.use('/public', router2);
+app.use('/api', authRouter);
+app.use('/public', publicRouter);
 
 /*
-app.get('/', function (req, res) {
-    res.send('Hello World!')
-});
-*/
+ app.get('/', function (req, res) {
+ res.send('Hello World!')
+ });
+ */
 
 app.listen(port);
 console.log('Magic happens on port ' + port);

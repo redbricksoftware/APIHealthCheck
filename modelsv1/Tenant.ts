@@ -1,6 +1,9 @@
 import {isNullOrUndefined} from "util";
 import {Error, ErrorType} from "./Error";
 import {isNumber} from "util";
+import {define} from "mime";
+
+
 
 export class Tenant {
     tenantID: number;

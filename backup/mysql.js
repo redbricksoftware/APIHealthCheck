@@ -131,6 +131,17 @@ showTables = function () {
 //dropStatusSummary();
 //createStatusSummary();
 
+
+//query += 'DROP USER healthCheckTest ';
+//query += 'CREATE USER healthCheckTest ; ';
+//query += 'GRANT ALL PRIVILEGES ON  healthCheckTest.* to healthCheckTest IDENTIFIED BY \'healthCheckTest\';';
+//query += 'show grants for healthCheckTest';
+//query += 'CREATE USER healthCheckTest IDENTIFIED BY \'healthCheckTest\'';
+//GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '<password>';
+
+//query+='flush PRIVILEGES';
+
+
 console.log(query);
 
 

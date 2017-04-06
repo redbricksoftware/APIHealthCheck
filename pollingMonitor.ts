@@ -5,8 +5,8 @@ import * as moment from 'moment';
 import * as https from 'https';
 import * as http from 'http';
 import * as timers from 'timers';
-import {Config} from "./models/Config";
-import {StatusDetail} from "./models/StatusDetail";
+import {Config} from "./modelsv1/Config";
+import {StatusDetail} from "./modelsv1/StatusDetail";
 import * as Cron from 'Cron';
 const CronJob = Cron.CronJob;
 

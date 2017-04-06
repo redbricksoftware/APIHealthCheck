@@ -1,5 +1,6 @@
 "use strict";
-var es6_promise_1 = require('es6-promise');
+Object.defineProperty(exports, "__esModule", { value: true });
+var es6_promise_1 = require("es6-promise");
 //import {Moment} from 'moment';
 var mysql = require('mysql');
 var moment = require('moment');
@@ -11,11 +12,11 @@ var pool = mysql.createPool({
     password: acctDetails.password,
     database: acctDetails.database
 });
-var Config_1 = require('./models/Config');
-var StatusDetail_1 = require('./models/StatusDetail');
-var StatusEnum_1 = require('./models/StatusEnum');
+var Config_1 = require("./modelsv1/Config");
+var StatusDetail_1 = require("./modelsv1/StatusDetail");
+var StatusEnum_1 = require("./modelsv1/StatusEnum");
 var util_1 = require("util");
-var StatusSummaryDaily_1 = require("./models/StatusSummaryDaily");
+var StatusSummaryDaily_1 = require("./modelsv1/StatusSummaryDaily");
 var daHealthCheck = (function () {
     function daHealthCheck() {
         this.init();

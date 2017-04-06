@@ -1,11 +1,12 @@
 'use strict';
-var mysql_1 = require('./mysql');
-var moment = require('moment');
-var https = require('https');
-var http = require('http');
-var timers = require('timers');
-var StatusDetail_1 = require("./models/StatusDetail");
-var Cron = require('Cron');
+Object.defineProperty(exports, "__esModule", { value: true });
+var mysql_1 = require("./mysql");
+var moment = require("moment");
+var https = require("https");
+var http = require("http");
+var timers = require("timers");
+var StatusDetail_1 = require("./modelsv1/StatusDetail");
+var Cron = require("Cron");
 var CronJob = Cron.CronJob;
 //Config Setup
 var deploymentType = process.env.NODE_ENV || 'development';

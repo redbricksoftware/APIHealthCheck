@@ -1,4 +1,4 @@
-import {Tenant} from "./models/Tenant";
+import {Tenant} from "./modelsv1/Tenant";
 import {Promise} from 'es6-promise';
 //import {Moment} from 'moment';
 const mysql = require('mysql');
@@ -14,12 +14,12 @@ const pool = mysql.createPool({
     database: acctDetails.database
 });
 
-import {Config} from './models/Config';
-import {StatusDetail} from './models/StatusDetail';
-import {StatusEnum} from './models/StatusEnum';
-import {User} from './models/User';
+import {Config} from './modelsv1/Config';
+import {StatusDetail} from './modelsv1/StatusDetail';
+import {StatusEnum} from './modelsv1/StatusEnum';
+import {User} from './modelsv1/User';
 import {isNullOrUndefined} from "util";
-import {StatusSummaryDaily} from "./models/StatusSummaryDaily";
+import {StatusSummaryDaily} from "./modelsv1/StatusSummaryDaily";
 import {stat} from "fs";
 
 export class daHealthCheck {

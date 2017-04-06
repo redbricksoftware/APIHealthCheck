@@ -1,6 +1,7 @@
 "use strict";
-var Config_1 = require('../models/Config');
-var chai_1 = require('chai');
+Object.defineProperty(exports, "__esModule", { value: true });
+var Config_1 = require("../modelsv1/Config");
+var chai_1 = require("chai");
 describe('APIConfig Class', function () {
     it('should be an object', function () {
         var config = new Config_1.Config();

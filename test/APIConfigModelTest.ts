@@ -1,4 +1,4 @@
-import {Config} from '../models/Config';
+import {Config} from '../modelsv1/Config';
 import {expect} from 'chai';
 import {isObject} from "util";
 import {isNullOrUndefined} from "util";

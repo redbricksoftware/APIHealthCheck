@@ -1,5 +1,6 @@
 "use strict";
-var Error_1 = require('./Error');
+Object.defineProperty(exports, "__esModule", { value: true });
+var Error_1 = require("./Error");
 var util_1 = require("util");
 var Helpers_1 = require("./Helpers");
 var util_2 = require("util");

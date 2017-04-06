@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Error = (function () {
     function Error(field, errorMessage, errorType) {
         this.field = field;
@@ -8,8 +9,8 @@ var Error = (function () {
     return Error;
 }());
 exports.Error = Error;
+var ErrorType;
 (function (ErrorType) {
     ErrorType[ErrorType["Warning"] = 1] = "Warning";
     ErrorType[ErrorType["Error"] = 99] = "Error";
-})(exports.ErrorType || (exports.ErrorType = {}));
-var ErrorType = exports.ErrorType;
+})(ErrorType = exports.ErrorType || (exports.ErrorType = {}));

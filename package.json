@@ -39,7 +39,9 @@
     "cron": "1.*",
     "@types/cron": "*",
     "express-jwt": "*",
-    "@types/express-jwt": "*"
+    "@types/express-jwt": "*",
+    "sequelize": "~3.30.4",
+    "@types/sequelize": "~4.0.48"
   },
   "devDependencies": {
     "mocha": "~3.*",

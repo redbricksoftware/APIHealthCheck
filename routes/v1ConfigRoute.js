@@ -14,14 +14,24 @@ module.exports = function (sequelize) {
         res.json({ success: true });
     });
     returnRouter.post('/', function (req, res) {
+        console.log(req.body);
         var config = sequelize['config'];
-        config.name = 'abc';
-        config.uri = 'localhost';
-        config.port = 334;
-        config.protocol = 'https';
-        sequelize['config'].create(config)
-            .then(function (config) {
-            res.json(config);
+        config.enabled = req.body.enabled;
+        config.pollFrequencyInSeconds = req.body.pollFrequencyInSeconds;
+        config.degradedResponseTimeMS = req.body.degradedResponseTimeMS;
+        config.failedResponseTimeMS = req.body.failedResponseTimeMS;
+        config.expectedResponseCode = req.body.expectedResponseCode;
+        config.name = req.body.name;
+        config.uri = req.body.uri;
+        config.port = req.body.port;
+        config.protocol = req.body.protocol;
+        console.log(config);
+        config.create(config)
+            .then(function (resp) {
+            res.json(resp);
+        })
+            .catch(function (err) {
+            res.json(err);
         });
     });
     returnRouter.put('/:id', function (req, res) {

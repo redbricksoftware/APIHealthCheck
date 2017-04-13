@@ -26,7 +26,7 @@ app.use(corsConfig);
 //region Routes
 
 let v1ConfigRoute = require('./routes/v1ConfigRoute');
-authRouter.use('/v1/config', v1ConfigRoute(sequelize));
+authRouter.use('/v1/config', v1ConfigRoute('abc', sequelize));
 //authRouter.use('/v1/config', v1HealthCheckRoute(healthCheck));
 
 //endregion

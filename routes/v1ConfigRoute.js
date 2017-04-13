@@ -3,12 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express = require('express');
 //module.exports = function (healthCheck: daHealthCheck) {
 module.exports = function (tenantID, sequelize) {
+    var Seq = require('sequelize');
     var returnRouter = express.Router();
     var config = sequelize['config'];
     returnRouter.get('/', function (req, res) {
         sequelize['config'].findAll({})
             .then(function (configs) {
             res.json(configs);
+        })
+            .catch(function (err) {
+            res.json(err);
         });
     });
     returnRouter.get('/:id', function (req, res) {
@@ -24,22 +28,79 @@ module.exports = function (tenantID, sequelize) {
         });
     });
     returnRouter.post('/', function (req, res) {
-        config.enabled = req.body.enabled;
-        config.pollFrequencyInSeconds = req.body.pollFrequencyInSeconds;
-        config.degradedResponseTimeMS = req.body.degradedResponseTimeMS;
-        config.failedResponseTimeMS = req.body.failedResponseTimeMS;
-        config.expectedResponseCode = req.body.expectedResponseCode;
-        config.name = req.body.name;
-        config.uri = req.body.uri;
-        config.port = req.body.port;
-        config.protocol = req.body.protocol;
-        config.create(config)
-            .then(function (resp) {
-            res.json(resp);
+        var newConfig = {
+            enabled: req.body.enabled,
+            pollFrequencyInSeconds: req.body.pollFrequencyInSeconds,
+            degradedResponseTimeMS: req.body.degradedResponseTimeMS,
+            failedResponseTimeMS: req.body.failedResponseTimeMS,
+            expectedResponseCode: req.body.expectedResponseCode,
+            uri: req.body.uri,
+            name: req.body.name,
+            port: req.body.port,
+            protocol: req.body.protocol
+        };
+        console.log(newConfig);
+        config.create(newConfig)
+            .then(function (newConfig) {
+            //console.log(newConfig);
+            console.log('success');
+            res.json(newConfig);
+        })
+            .catch(Seq.ValidationError, function (err) {
+            console.log('val error');
+            for (var i = 0; i < err.errors.length; i++) {
+                console.log(err.errors[i].path + ': ' + err.errors[i].message);
+            }
+            // responds with validation errors
+            res.json({ success: false });
         })
             .catch(function (err) {
-            res.json(err);
+            console.log(err);
+            res.json({ success: false });
         });
+        /*
+         config.build(req.body)
+         .validate()
+         .then(function(val){
+         console.log('success');
+         res.json(val);
+         })
+         .catch(function(err){
+         console.log('err');
+         res.json({err: err});
+         })
+         */
+        //res.json({success: true});
+        /*
+
+         config.create(config)
+         .then(function (model) {
+         res.json(model)
+         // if validation passes you will get saved model
+         })
+         .catch(Sequelize.ValidationError, function (err) {
+         console.log('val error');
+         for (let i = 0; i < err.errors.length; i++) {
+         console.log(err.errors[i].path + ': ' + err.errors[i].message);
+         }
+         // responds with validation errors
+         })
+         .catch(function (err) {
+         console.log('other err');
+         console.log(err);
+         });
+
+         */
+        /*
+         config.create(config)
+         .then(function (resp) {
+         res.json(resp);
+         })
+         .catch(function (err) {
+         console.log(err);
+         res.json(err);
+         });
+         */
     });
     returnRouter.put('/:id', function (req, res) {
         //config.id = req.params.id;
@@ -61,7 +122,13 @@ module.exports = function (tenantID, sequelize) {
         });
     });
     returnRouter.delete('/:id', function (req, res) {
-        res.json({ success: true });
+        config.destroy({ where: { id: req.params.id } })
+            .then(function (resp) {
+            res.json(resp);
+        })
+            .catch(function (err) {
+            res.json(err);
+        });
     });
     return returnRouter;
 };

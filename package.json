@@ -22,17 +22,17 @@
     "node": ">=6"
   },
   "dependencies": {
-    "express": "~4.14.0",
+    "express": "~4.15",
     "@types/express": "*",
     "body-parser": "~1.*",
-    "mysql": "~2.13.0",
+    "mysql": "~2.13",
     "@types/mysql": "*",
     "es6-promise": "4.*",
     "@types/es6-promise": "*",
     "express-jwt": "*",
     "@types/express-jwt": "*",
-    "sequelize": "~3.30.4",
-    "@types/sequelize": "~4.0.48"
+    "sequelize": "~3.30",
+    "@types/sequelize": "~4.0"
   },
   "devDependencies": {
     "mocha": "~3.*",

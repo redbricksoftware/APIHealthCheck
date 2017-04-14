@@ -22,7 +22,6 @@ app.use(bodyParser.json({type: "application/json"}));
 let corsConfig = require('./corsConfig');
 app.use(corsConfig);
 
-
 //region Routes
 
 let v1ConfigRoute = require('./routes/v1ConfigRoute');

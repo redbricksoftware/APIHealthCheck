@@ -1,5 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
-    var healthCheckDetailModel = sequelize.define("healthCheckDetails", {
+    var healthCheckDetailModel = sequelize.define("healthCheckDetail", {
         uri: {
             type: DataTypes.STRING
         },

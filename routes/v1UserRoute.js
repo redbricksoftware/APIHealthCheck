@@ -5,7 +5,7 @@ var express = require('express');
 module.exports = function (tenantID, sequelize) {
     var Seq = require('sequelize');
     var returnRouter = express.Router();
-    var model = sequelize['config'];
+    var model = sequelize['user'];
     returnRouter.get('/', function (req, res) {
         model.findAll({})
             .then(function (response) {
@@ -28,19 +28,11 @@ module.exports = function (tenantID, sequelize) {
         });
     });
     returnRouter.post('/', function (req, res) {
-        var newConfig = {
-            enabled: req.body.enabled,
-            pollFrequencyInSeconds: req.body.pollFrequencyInSeconds,
-            degradedResponseTimeMS: req.body.degradedResponseTimeMS,
-            failedResponseTimeMS: req.body.failedResponseTimeMS,
-            expectedResponseCode: req.body.expectedResponseCode,
-            uri: req.body.uri,
-            name: req.body.name,
-            port: req.body.port,
-            protocol: req.body.protocol
+        var newUser = {
+            identityUserID: req.body.identityUserID,
+            email: req.body.email
         };
-        console.log(newConfig);
-        model.create(newConfig)
+        model.create(newUser)
             .then(function (response) {
             res.json(response);
         })
@@ -58,18 +50,11 @@ module.exports = function (tenantID, sequelize) {
         });
     });
     returnRouter.put('/:id', function (req, res) {
-        var newConfig = {
-            enabled: req.body.enabled,
-            pollFrequencyInSeconds: req.body.pollFrequencyInSeconds,
-            degradedResponseTimeMS: req.body.degradedResponseTimeMS,
-            failedResponseTimeMS: req.body.failedResponseTimeMS,
-            expectedResponseCode: req.body.expectedResponseCode,
-            uri: req.body.uri,
-            name: req.body.name,
-            port: req.body.port,
-            protocol: req.body.protocol
+        var newUser = {
+            identityUserID: req.body.identityUserID,
+            email: req.body.email
         };
-        model.update(newConfig, { where: { id: req.params.id } })
+        model.update(newUser, { where: { id: req.params.id } })
             .then(function (response) {
             res.json(response);
         })

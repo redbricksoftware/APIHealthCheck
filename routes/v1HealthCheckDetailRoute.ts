@@ -7,7 +7,7 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
     let Seq = require('sequelize');
 
     const returnRouter = express.Router();
-    let model = sequelize['config'];
+    let model = sequelize['healthCheckDetail'];
 
     returnRouter.get('/', function (req, res) {
         model.findAll({})
@@ -35,21 +35,14 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
 
     returnRouter.post('/', function (req, res) {
 
-        let newConfig = {
-            enabled: req.body.enabled,
-            pollFrequencyInSeconds: req.body.pollFrequencyInSeconds,
-            degradedResponseTimeMS: req.body.degradedResponseTimeMS,
-            failedResponseTimeMS: req.body.failedResponseTimeMS,
-            expectedResponseCode: req.body.expectedResponseCode,
+        let newHealthCheckDetail = {
             uri: req.body.uri,
-            name: req.body.name,
-            port: req.body.port,
-            protocol: req.body.protocol
+            responseCode: req.body.responseCode,
+            requestLengthMS: req.body.requestLengthMS,
+            requestTime: req.body.requestTime
         };
 
-        console.log(newConfig);
-
-        model.create(newConfig)
+        model.create(newHealthCheckDetail)
             .then((response) => {
                 res.json(response);
 
@@ -71,19 +64,14 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
 
     returnRouter.put('/:id', function (req, res) {
 
-        let newConfig = {
-            enabled: req.body.enabled,
-            pollFrequencyInSeconds: req.body.pollFrequencyInSeconds,
-            degradedResponseTimeMS: req.body.degradedResponseTimeMS,
-            failedResponseTimeMS: req.body.failedResponseTimeMS,
-            expectedResponseCode: req.body.expectedResponseCode,
+        let newHealthCheckDetail = {
             uri: req.body.uri,
-            name: req.body.name,
-            port: req.body.port,
-            protocol: req.body.protocol
+            responseCode: req.body.responseCode,
+            requestLengthMS: req.body.requestLengthMS,
+            requestTime: req.body.requestTime
         };
 
-        model.update(newConfig, {where: {id: req.params.id}})
+        model.update(newHealthCheckDetail, {where: {id: req.params.id}})
             .then(function (response) {
                 res.json(response);
             })

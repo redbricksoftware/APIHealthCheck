@@ -5,7 +5,7 @@ var express = require('express');
 module.exports = function (tenantID, sequelize) {
     var Seq = require('sequelize');
     var returnRouter = express.Router();
-    var model = sequelize['config'];
+    var model = sequelize['tenant'];
     returnRouter.get('/', function (req, res) {
         model.findAll({})
             .then(function (response) {
@@ -28,19 +28,13 @@ module.exports = function (tenantID, sequelize) {
         });
     });
     returnRouter.post('/', function (req, res) {
-        var newConfig = {
-            enabled: req.body.enabled,
-            pollFrequencyInSeconds: req.body.pollFrequencyInSeconds,
-            degradedResponseTimeMS: req.body.degradedResponseTimeMS,
-            failedResponseTimeMS: req.body.failedResponseTimeMS,
-            expectedResponseCode: req.body.expectedResponseCode,
-            uri: req.body.uri,
+        var newTenant = {
             name: req.body.name,
-            port: req.body.port,
-            protocol: req.body.protocol
+            code: req.body.code,
+            maxAPIs: req.body.maxAPIs,
+            minimumRequestFrequency: req.body.minimumRequestFrequency
         };
-        console.log(newConfig);
-        model.create(newConfig)
+        model.create(newTenant)
             .then(function (response) {
             res.json(response);
         })
@@ -58,18 +52,13 @@ module.exports = function (tenantID, sequelize) {
         });
     });
     returnRouter.put('/:id', function (req, res) {
-        var newConfig = {
-            enabled: req.body.enabled,
-            pollFrequencyInSeconds: req.body.pollFrequencyInSeconds,
-            degradedResponseTimeMS: req.body.degradedResponseTimeMS,
-            failedResponseTimeMS: req.body.failedResponseTimeMS,
-            expectedResponseCode: req.body.expectedResponseCode,
-            uri: req.body.uri,
+        var newTenant = {
             name: req.body.name,
-            port: req.body.port,
-            protocol: req.body.protocol
+            code: req.body.code,
+            maxAPIs: req.body.maxAPIs,
+            minimumRequestFrequency: req.body.minimumRequestFrequency
         };
-        model.update(newConfig, { where: { id: req.params.id } })
+        model.update(newTenant, { where: { id: req.params.id } })
             .then(function (response) {
             res.json(response);
         })

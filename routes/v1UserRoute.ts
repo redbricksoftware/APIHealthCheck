@@ -1,5 +1,5 @@
 import {Sequelize} from "sequelize";
-import {isNullOrUndefined} from "util";
+import {isNullOrUndefined, isObject} from "util";
 const express = require('express');
 
 //module.exports = function (healthCheck: daHealthCheck) {
@@ -7,9 +7,10 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
     let Seq = require('sequelize');
 
     const returnRouter = express.Router();
-    let model = sequelize['config'];
+    let model = sequelize['user'];
 
     returnRouter.get('/', function (req, res) {
+
         model.findAll({})
             .then(function (response) {
                 res.json(response);
@@ -35,21 +36,12 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
 
     returnRouter.post('/', function (req, res) {
 
-        let newConfig = {
-            enabled: req.body.enabled,
-            pollFrequencyInSeconds: req.body.pollFrequencyInSeconds,
-            degradedResponseTimeMS: req.body.degradedResponseTimeMS,
-            failedResponseTimeMS: req.body.failedResponseTimeMS,
-            expectedResponseCode: req.body.expectedResponseCode,
-            uri: req.body.uri,
-            name: req.body.name,
-            port: req.body.port,
-            protocol: req.body.protocol
+        let newUser = {
+            identityUserID: req.body.identityUserID,
+            email: req.body.email
         };
 
-        console.log(newConfig);
-
-        model.create(newConfig)
+        model.create(newUser)
             .then((response) => {
                 res.json(response);
 
@@ -71,19 +63,12 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
 
     returnRouter.put('/:id', function (req, res) {
 
-        let newConfig = {
-            enabled: req.body.enabled,
-            pollFrequencyInSeconds: req.body.pollFrequencyInSeconds,
-            degradedResponseTimeMS: req.body.degradedResponseTimeMS,
-            failedResponseTimeMS: req.body.failedResponseTimeMS,
-            expectedResponseCode: req.body.expectedResponseCode,
-            uri: req.body.uri,
-            name: req.body.name,
-            port: req.body.port,
-            protocol: req.body.protocol
+        let newUser = {
+            identityUserID: req.body.identityUserID,
+            email: req.body.email
         };
 
-        model.update(newConfig, {where: {id: req.params.id}})
+        model.update(newUser, {where: {id: req.params.id}})
             .then(function (response) {
                 res.json(response);
             })
@@ -114,7 +99,6 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
             .catch(function (err) {
                 res.json(err);
             });
-
     });
 
     return returnRouter;

@@ -92,6 +92,12 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
         let patchObjectProperties = require('./helperLibrary/patchObjectProperties');
         let patchObject = patchObjectProperties(req.body, model);
 
+        console.log(patchObject);
+
+        res.json({success: true});
+
+        /*
+
         model.update(patchObject, {where: {id: req.params.id}})
             .then(function (response) {
                 res.json(response);
@@ -99,6 +105,8 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
             .catch(function (err) {
                 res.json(err);
             });
+
+            */
     });
 
     return returnRouter;

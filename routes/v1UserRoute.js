@@ -74,13 +74,19 @@ module.exports = function (tenantID, sequelize) {
     returnRouter.patch('/:id', function (req, res) {
         var patchObjectProperties = require('./helperLibrary/patchObjectProperties');
         var patchObject = patchObjectProperties(req.body, model);
-        model.update(patchObject, { where: { id: req.params.id } })
+        console.log(patchObject);
+        res.json({ success: true });
+        /*
+
+        model.update(patchObject, {where: {id: req.params.id}})
             .then(function (response) {
-            res.json(response);
-        })
+                res.json(response);
+            })
             .catch(function (err) {
-            res.json(err);
-        });
+                res.json(err);
+            });
+
+            */
     });
     return returnRouter;
 };

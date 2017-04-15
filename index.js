@@ -3,7 +3,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var jwt = require("express-jwt");
 var acctDetails = require('./devHelper/acctDetails.json');
-var sequelize = require('./dataAccess/createDBSequelize');
+var sequelize = require('./dataAccess/createDBSequelize')();
 var jwtCheck = jwt({
     secret: acctDetails.auth0Secret,
     audience: acctDetails.auth0ClientID

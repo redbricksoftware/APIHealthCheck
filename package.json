@@ -9,7 +9,7 @@
     "Monitoring"
   ],
   "author": "RedBrickSoftware",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "repository": {
     "type": "git",
     "url": "https://github.com/redbricksoftware/webHealthCheckServer.git"

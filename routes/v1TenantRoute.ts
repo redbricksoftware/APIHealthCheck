@@ -24,7 +24,12 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
         model.find({where: {id: req.params.id}})
             .then(function (response) {
                 console.log('Account located for id ' + req.params.id);
-                res.json(response);
+                if (isNullOrUndefined(response)) {
+                    res.json({});
+                }
+                else {
+                    res.json(response);
+                }
             })
             .catch(function (err) {
                 console.log('An error occurred while searching for account ' + req.params.id);

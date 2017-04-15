@@ -4,7 +4,7 @@ import jwt = require("express-jwt");
 
 const acctDetails = require('./devHelper/acctDetails.json');
 
-const sequelize = require('./dataAccess/createDBSequelize');
+const sequelize = require('./dataAccess/createDBSequelize')();
 
 const jwtCheck = jwt({
     secret: acctDetails.auth0Secret,

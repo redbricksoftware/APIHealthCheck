@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var util_1 = require("util");
 var express = require('express');
 //module.exports = function (healthCheck: daHealthCheck) {
 module.exports = function (tenantID, sequelize) {
@@ -20,7 +21,12 @@ module.exports = function (tenantID, sequelize) {
         model.find({ where: { id: req.params.id } })
             .then(function (response) {
             console.log('Account located for id ' + req.params.id);
-            res.json(response);
+            if (util_1.isNullOrUndefined(response)) {
+                res.json({});
+            }
+            else {
+                res.json(response);
+            }
         })
             .catch(function (err) {
             console.log('An error occurred while searching for account ' + req.params.id);

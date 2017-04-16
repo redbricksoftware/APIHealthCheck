@@ -26,6 +26,10 @@ module.exports = function (sequelize, DataTypes) {
                 isNumeric: true
             }
         },
+        path: {
+            type: DataTypes.STRING,
+            validate: {}
+        },
         enabled: {
             type: DataTypes.BOOLEAN,
             defaultValue: 1,

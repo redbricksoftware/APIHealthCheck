@@ -49,7 +49,8 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
             uri: req.body.uri,
             name: req.body.name,
             port: req.body.port,
-            protocol: req.body.protocol
+            protocol: req.body.protocol,
+            path: req.body.path
         };
 
         console.log(newConfig);
@@ -85,7 +86,8 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
             uri: req.body.uri,
             name: req.body.name,
             port: req.body.port,
-            protocol: req.body.protocol
+            protocol: req.body.protocol,
+            path: req.body.path
         };
 
         model.update(newConfig, {where: {id: req.params.id}})

@@ -1,5 +1,6 @@
 module.exports = function (sequelize, DataTypes) {
-    var healthCheckDetailModel = sequelize.define("healthCheckDetail", {
+
+    let healthCheckDetailModel = sequelize.define("healthCheckDetail", {
         uri: {
             type: DataTypes.STRING
         },
@@ -11,20 +12,25 @@ module.exports = function (sequelize, DataTypes) {
         },
         requestTime: {
             type: DataTypes.DATE
+        },
+        responseStatus: {
+            type: DataTypes.INTEGER
         }
     }, {
         classMethods: {
             associate: function (models) {
-                var tenantIDOptions = {
+                let tenantIDOptions = {
                     foreignKey: 'tenantID'
                 };
                 healthCheckDetailModel.belongsTo(models.tenant, tenantIDOptions);
-                var configIDOptions = {
+
+                let configIDOptions = {
                     foreignKey: 'configID'
                 };
                 healthCheckDetailModel.belongsTo(models.config, configIDOptions);
             }
         }
     });
+
     return healthCheckDetailModel;
 };

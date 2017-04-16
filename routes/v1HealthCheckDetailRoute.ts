@@ -44,7 +44,9 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
             uri: req.body.uri,
             responseCode: req.body.responseCode,
             requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime
+            requestTime: req.body.requestTime,
+            isValidResponse: req.body.isValidResponse,
+            configID: req.body.configID
         };
 
         model.create(newHealthCheckDetail)
@@ -73,7 +75,8 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
             uri: req.body.uri,
             responseCode: req.body.responseCode,
             requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime
+            requestTime: req.body.requestTime,
+            isValidResponse: req.body.isValidResponse
         };
 
         model.update(newHealthCheckDetail, {where: {id: req.params.id}})

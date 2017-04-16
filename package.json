@@ -1,6 +1,6 @@
 {
   "name": "WebHealthCheckServer",
-  "version": "0.1.105",
+  "version": "0.1.106",
   "description": "Monitor and log the status of APIs.",
   "keywords": [
     "API",

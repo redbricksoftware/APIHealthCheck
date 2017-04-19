@@ -31,6 +31,9 @@ authRouter.use('/v1/config', v1ConfigRoute('abc', sequelize));
 let v1HealthCheckDetailRoute = require('./routes/v1HealthCheckDetailRoute');
 authRouter.use('/v1/healthCheckDetail', v1HealthCheckDetailRoute('abc', sequelize));
 
+let v1HealthCheckSummaryRoute = require('./routes/v1HealthCheckSummaryRoute');
+authRouter.use('/v1/healthCheckSummary', v1HealthCheckSummaryRoute('abc', sequelize));
+
 let v1UserRoute = require('./routes/v1UserRoute');
 authRouter.use('/v1/user', v1UserRoute('abc', sequelize));
 

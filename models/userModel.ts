@@ -1,6 +1,3 @@
-/**
- * Created by BryceD on 4/13/17.
- */
 module.exports = function (sequelize, DataTypes) {
 
     let userModel = sequelize.define("user", {

@@ -6,7 +6,7 @@ var express = require('express');
 module.exports = function (tenantID, sequelize) {
     var Seq = require('sequelize');
     var returnRouter = express.Router();
-    var model = sequelize['healthCheckDetail'];
+    var model = sequelize['healthCheckSummary'];
     returnRouter.get('/', function (req, res) {
         var query = {};
         for (var prop in req.query) {

@@ -15,6 +15,7 @@ module.exports = function (sequelize, DataTypes) {
                     foreignKey: 'tenantID'
                 };
                 emergencyContactGroupModel.belongsTo(models.tenant, tenantIDOptions);
+
                 let userIDOptions = {
                     foreignKey: 'userID'
                 };

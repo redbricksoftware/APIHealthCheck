@@ -1,5 +1,5 @@
-import {Sequelize} from "sequelize";
-import {isNullOrUndefined} from "util";
+import {Sequelize} from 'sequelize';
+import {isNullOrUndefined} from 'util';
 const express = require('express');
 
 //module.exports = function (healthCheck: daHealthCheck) {
@@ -7,9 +7,10 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
     let Seq = require('sequelize');
 
     const returnRouter = express.Router();
-    let model = sequelize['healthCheckDetail'];
+    let model = sequelize['healthCheckSummary'];
 
     returnRouter.get('/', function (req, res) {
+
         let query = {};
 
         for (let prop in req.query) {

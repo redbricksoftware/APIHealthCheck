@@ -2,6 +2,8 @@ import {Sequelize} from "sequelize";
 import {isNullOrUndefined} from "util";
 const express = require('express');
 
+//TODO: get tenant from UserID
+
 //module.exports = function (healthCheck: daHealthCheck) {
 module.exports = function (tenantID: string, sequelize: Sequelize) {
     let Seq = require('sequelize');

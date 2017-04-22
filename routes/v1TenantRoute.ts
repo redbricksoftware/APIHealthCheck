@@ -44,7 +44,7 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
             name: req.body.name,
             code: req.body.code,
             maxAPIs: req.body.maxAPIs,
-            minimumRequestFrequency: req.body.minimumRequestFrequency
+            minimumTimeBetweenRequestsSeconds: req.body.minimumTimeBetweenRequestsSeconds
         };
 
         model.create(newTenant)
@@ -73,7 +73,7 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
             name: req.body.name,
             code: req.body.code,
             maxAPIs: req.body.maxAPIs,
-            minimumRequestFrequency: req.body.minimumRequestFrequency
+            minimumTimeBetweenRequestsSeconds: req.body.minimumTimeBetweenRequestsSeconds
         };
 
         model.update(newTenant, {where: {id: req.params.id}})

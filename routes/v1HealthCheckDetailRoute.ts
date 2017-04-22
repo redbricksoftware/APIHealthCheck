@@ -1,6 +1,8 @@
-import {Sequelize} from "sequelize";
-import {isNullOrUndefined} from "util";
+import {Sequelize} from 'sequelize';
+import {isNullOrUndefined} from 'util';
 const express = require('express');
+
+//TODO: get tenant from UserID
 
 //module.exports = function (healthCheck: daHealthCheck) {
 module.exports = function (tenantID: string, sequelize: Sequelize) {
@@ -17,12 +19,17 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
                 case 'startdate':
                     query['requestDate'] = {
                         $gte: req.query[prop]
-                    }
+                    };
                     break;
                 case 'enddate':
                     query['requestDate'] = {
                         $lte: req.query[prop]
-                    }
+                    };
+                    break;
+                case 'configid':
+                    query['configID'] = {
+                        $eq: req.query[prop]
+                    };
                     break;
             }
         }
@@ -57,12 +64,13 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
 
     returnRouter.post('/', function (req, res) {
 
+
         let newHealthCheckDetail = {
             uri: req.body.uri,
             responseCode: req.body.responseCode,
             requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime,
-            isValidResponse: req.body.isValidResponse,
+            requestDate: req.body.requestDate,
+            responseStatus: req.body.responseStatus,
             configID: req.body.configID
         };
 
@@ -92,8 +100,8 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
             uri: req.body.uri,
             responseCode: req.body.responseCode,
             requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime,
-            isValidResponse: req.body.isValidResponse
+            requestDate: req.body.requestDate,
+            responseStatus: req.body.responseStatus
         };
 
         model.update(newHealthCheckDetail, {where: {id: req.params.id}})

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = require("util");
 var express = require('express');
+//TODO: get tenant from UserID
 //module.exports = function (healthCheck: daHealthCheck) {
 module.exports = function (tenantID, sequelize) {
     var Seq = require('sequelize');

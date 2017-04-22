@@ -10,7 +10,7 @@ module.exports = function (sequelize, DataTypes) {
         requestLengthMS: {
             type: DataTypes.INTEGER
         },
-        requestTime: {
+        requestDate: {
             type: DataTypes.DATE
         },
         responseStatus: {

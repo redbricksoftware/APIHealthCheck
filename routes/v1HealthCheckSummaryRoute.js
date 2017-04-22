@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = require("util");
 var express = require('express');
+//TODO: get tenant from UserID
 //module.exports = function (healthCheck: daHealthCheck) {
 module.exports = function (tenantID, sequelize) {
     var Seq = require('sequelize');
@@ -51,10 +52,13 @@ module.exports = function (tenantID, sequelize) {
     returnRouter.post('/', function (req, res) {
         var newHealthCheckDetail = {
             uri: req.body.uri,
-            responseCode: req.body.responseCode,
-            requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime,
-            isValidResponse: req.body.isValidResponse,
+            requestDate: req.body.requestDate,
+            averageRequestLengthMS: req.body.averageRequestLengthMS,
+            activeResponsePercent: req.body.activeResponsePercent,
+            degradedResponsePercent: req.body.degradedResponsePercent,
+            failedResponsePercent: req.body.failedResponsePercent,
+            otherResponsePercent: req.body.otherResponsePercent,
+            tenantID: req.body.tenantID,
             configID: req.body.configID
         };
         model.create(newHealthCheckDetail)
@@ -77,10 +81,14 @@ module.exports = function (tenantID, sequelize) {
     returnRouter.put('/:id', function (req, res) {
         var newHealthCheckDetail = {
             uri: req.body.uri,
-            responseCode: req.body.responseCode,
-            requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime,
-            isValidResponse: req.body.isValidResponse
+            requestDate: req.body.requestDate,
+            averageRequestLengthMS: req.body.averageRequestLengthMS,
+            activeResponsePercent: req.body.activeResponsePercent,
+            degradedResponsePercent: req.body.degradedResponsePercent,
+            failedResponsePercent: req.body.failedResponsePercent,
+            otherResponsePercent: req.body.otherResponsePercent,
+            tenantID: req.body.tenantID,
+            configID: req.body.configID
         };
         model.update(newHealthCheckDetail, { where: { id: req.params.id } })
             .then(function (response) {

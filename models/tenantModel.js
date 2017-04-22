@@ -12,7 +12,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.INTEGER,
             defaultValue: 10
         },
-        minimumRequestFrequency: {
+        minimumTimeBetweenRequestsSeconds: {
             type: DataTypes.INTEGER,
             defaultValue: 3600
         }

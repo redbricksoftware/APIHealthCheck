@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = require("util");
 var express = require('express');
+//TODO: get tenant from UserID
 //module.exports = function (healthCheck: daHealthCheck) {
 module.exports = function (tenantID, sequelize) {
     var Seq = require('sequelize');
@@ -19,6 +20,11 @@ module.exports = function (tenantID, sequelize) {
                 case 'enddate':
                     query['requestDate'] = {
                         $lte: req.query[prop]
+                    };
+                    break;
+                case 'configid':
+                    query['configID'] = {
+                        $eq: req.query[prop]
                     };
                     break;
             }
@@ -53,8 +59,8 @@ module.exports = function (tenantID, sequelize) {
             uri: req.body.uri,
             responseCode: req.body.responseCode,
             requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime,
-            isValidResponse: req.body.isValidResponse,
+            requestDate: req.body.requestDate,
+            responseStatus: req.body.responseStatus,
             configID: req.body.configID
         };
         model.create(newHealthCheckDetail)
@@ -79,8 +85,8 @@ module.exports = function (tenantID, sequelize) {
             uri: req.body.uri,
             responseCode: req.body.responseCode,
             requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime,
-            isValidResponse: req.body.isValidResponse
+            requestDate: req.body.requestDate,
+            responseStatus: req.body.responseStatus
         };
         model.update(newHealthCheckDetail, { where: { id: req.params.id } })
             .then(function (response) {

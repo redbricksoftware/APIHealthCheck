@@ -2,6 +2,8 @@ import {Sequelize} from 'sequelize';
 import {isNullOrUndefined} from 'util';
 const express = require('express');
 
+//TODO: get tenant from UserID
+
 //module.exports = function (healthCheck: daHealthCheck) {
 module.exports = function (tenantID: string, sequelize: Sequelize) {
     let Seq = require('sequelize');
@@ -60,10 +62,13 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
 
         let newHealthCheckDetail = {
             uri: req.body.uri,
-            responseCode: req.body.responseCode,
-            requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime,
-            isValidResponse: req.body.isValidResponse,
+            requestDate: req.body.requestDate,
+            averageRequestLengthMS: req.body.averageRequestLengthMS,
+            activeResponsePercent: req.body.activeResponsePercent,
+            degradedResponsePercent: req.body.degradedResponsePercent,
+            failedResponsePercent: req.body.failedResponsePercent,
+            otherResponsePercent: req.body.otherResponsePercent,
+            tenantID: req.body.tenantID,
             configID: req.body.configID
         };
 
@@ -91,10 +96,14 @@ module.exports = function (tenantID: string, sequelize: Sequelize) {
 
         let newHealthCheckDetail = {
             uri: req.body.uri,
-            responseCode: req.body.responseCode,
-            requestLengthMS: req.body.requestLengthMS,
-            requestTime: req.body.requestTime,
-            isValidResponse: req.body.isValidResponse
+            requestDate: req.body.requestDate,
+            averageRequestLengthMS: req.body.averageRequestLengthMS,
+            activeResponsePercent: req.body.activeResponsePercent,
+            degradedResponsePercent: req.body.degradedResponsePercent,
+            failedResponsePercent: req.body.failedResponsePercent,
+            otherResponsePercent: req.body.otherResponsePercent,
+            tenantID: req.body.tenantID,
+            configID: req.body.configID
         };
 
         model.update(newHealthCheckDetail, {where: {id: req.params.id}})
